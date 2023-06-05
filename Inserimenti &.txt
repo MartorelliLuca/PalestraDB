@@ -1,0 +1,182 @@
+INSERT INTO `PalestraDB`.`Clienti` (`CF`, `Nome`, `Cognome`, `PT`, `Username`) VALUES ('DSNLSS00T07H501I', 'Alessio', 'De Santis', 'RSSMRA91L11H501B', 'alessio07103');
+INSERT INTO `PalestraDB`.`Clienti` (`CF`, `Nome`, `Cognome`, `PT`, `Username`) VALUES ('LNRVRD75E01F205H', 'Leonardo', 'Verdi', 'RSSMTT80A01F205W', 'Leo75');
+INSERT INTO `PalestraDB`.`Clienti` (`CF`, `Nome`, `Cognome`, `PT`, `Username`) VALUES ('LROLSN99P17H501J', 'Alessandro', 'Lori', 'RSSMRA91L11H501B', 'Reliquial179');
+INSERT INTO `PalestraDB`.`Clienti` (`CF`, `Nome`, `Cognome`, `PT`, `Username`) VALUES ('MRTLCU00P01D612J', 'Luca', 'Martorelli', 'RSSMTT80A01F205W', 'LuX');
+INSERT INTO `PalestraDB`.`Clienti` (`CF`, `Nome`, `Cognome`, `PT`, `Username`) VALUES ('SRGLVC00L11H501P', 'Ludovico', 'Serighelli', 'RSSMRA91L11H501B', 'Luxo');
+
+INSERT INTO `PalestraDB`.`Esercizi` (`Nome`) VALUES ('Trazioni Presa Supina');
+INSERT INTO `PalestraDB`.`Esercizi` (`Nome`) VALUES ('Affondi Bulgari');
+INSERT INTO `PalestraDB`.`Esercizi` (`Nome`) VALUES ('Alzate Frontali');
+INSERT INTO `PalestraDB`.`Esercizi` (`Nome`) VALUES ('Alzate Laterali');
+INSERT INTO `PalestraDB`.`Esercizi` (`Nome`) VALUES ('Bicep Curl');
+INSERT INTO `PalestraDB`.`Esercizi` (`Nome`) VALUES ('Calf Machine');
+INSERT INTO `PalestraDB`.`Esercizi` (`Nome`) VALUES ('Chest Press');
+INSERT INTO `PalestraDB`.`Esercizi` (`Nome`) VALUES ('Croci Cavi Alti');
+INSERT INTO `PalestraDB`.`Esercizi` (`Nome`) VALUES ('Croci Cavi Bassi');
+INSERT INTO `PalestraDB`.`Esercizi` (`Nome`) VALUES ('Croci con i manubri');
+INSERT INTO `PalestraDB`.`Esercizi` (`Nome`) VALUES ('Crunch a terra');
+INSERT INTO `PalestraDB`.`Esercizi` (`Nome`) VALUES ('Crunch su Sbarra');
+INSERT INTO `PalestraDB`.`Esercizi` (`Nome`) VALUES ('Curl a Martello');
+INSERT INTO `PalestraDB`.`Esercizi` (`Nome`) VALUES ('Deadlift');
+INSERT INTO `PalestraDB`.`Esercizi` (`Nome`) VALUES ('Dips');
+INSERT INTO `PalestraDB`.`Esercizi` (`Nome`) VALUES ('Hip Trust');
+INSERT INTO `PalestraDB`.`Esercizi` (`Nome`) VALUES ('Lat Machine');
+INSERT INTO `PalestraDB`.`Esercizi` (`Nome`) VALUES ('Leg curl');
+INSERT INTO `PalestraDB`.`Esercizi` (`Nome`) VALUES ('Leg Extension');
+INSERT INTO `PalestraDB`.`Esercizi` (`Nome`) VALUES ('Leg Press');
+INSERT INTO `PalestraDB`.`Esercizi` (`Nome`) VALUES ('Military Press');
+INSERT INTO `PalestraDB`.`Esercizi` (`Nome`) VALUES ('Panca Inclinata Bilanciere');
+INSERT INTO `PalestraDB`.`Esercizi` (`Nome`) VALUES ('Panca Inclinata Manubri');
+INSERT INTO `PalestraDB`.`Esercizi` (`Nome`) VALUES ('Panca Piana Bilanciere');
+INSERT INTO `PalestraDB`.`Esercizi` (`Nome`) VALUES ('Panca Piana Manubri');
+INSERT INTO `PalestraDB`.`Esercizi` (`Nome`) VALUES ('Panca Scott');
+INSERT INTO `PalestraDB`.`Esercizi` (`Nome`) VALUES ('Pectoral Machine');
+INSERT INTO `PalestraDB`.`Esercizi` (`Nome`) VALUES ('Piegamenti');
+INSERT INTO `PalestraDB`.`Esercizi` (`Nome`) VALUES ('Rematore');
+INSERT INTO `PalestraDB`.`Esercizi` (`Nome`) VALUES ('Shoulder Press');
+INSERT INTO `PalestraDB`.`Esercizi` (`Nome`) VALUES ('Spider Curl');
+INSERT INTO `PalestraDB`.`Esercizi` (`Nome`) VALUES ('Squat');
+INSERT INTO `PalestraDB`.`Esercizi` (`Nome`) VALUES ('Squat Bulgaro');
+INSERT INTO `PalestraDB`.`Esercizi` (`Nome`) VALUES ('Stacchi');
+INSERT INTO `PalestraDB`.`Esercizi` (`Nome`) VALUES ('Tirate al Mento');
+INSERT INTO `PalestraDB`.`Esercizi` (`Nome`) VALUES ('Tricep Pushdown');
+INSERT INTO `PalestraDB`.`Esercizi` (`Nome`) VALUES ('Tricep Pushdown Inverso');
+
+INSERT INTO `PalestraDB`.`EserciziSvolti` (`Esercizio`) VALUES ('Affondi Bulgari', '2023-06-04', '2023-06-04', 'DSNLSS00T07H501I', '1');
+INSERT INTO `PalestraDB`.`EserciziSvolti` (`Esercizio`) VALUES ('Alzate Laterali', '2023-06-03', '2023-06-03', 'MRTLCU00P01D612J', '2');
+INSERT INTO `PalestraDB`.`EserciziSvolti` (`Esercizio`) VALUES ('Dips', '2023-06-03', '2023-06-03', 'MRTLCU00P01D612J', '0');
+INSERT INTO `PalestraDB`.`EserciziSvolti` (`Esercizio`) VALUES ('Leg Press', '2023-06-04', '2023-06-04', 'DSNLSS00T07H501I', '4');
+INSERT INTO `PalestraDB`.`EserciziSvolti` (`Esercizio`) VALUES ('Military Press', '2023-06-04', '2023-06-04', 'DSNLSS00T07H501I', '1');
+INSERT INTO `PalestraDB`.`EserciziSvolti` (`Esercizio`) VALUES ('Rematore', '2023-06-03', '2023-06-03', 'MRTLCU00P01D612J', '0');
+INSERT INTO `PalestraDB`.`EserciziSvolti` (`Esercizio`) VALUES ('Squat', '2023-06-03', '2023-06-03', 'MRTLCU00P01D612J', '1');
+INSERT INTO `PalestraDB`.`EserciziSvolti` (`Esercizio`) VALUES ('Tricep Pushdown', '2023-06-04', '2023-06-04', 'DSNLSS00T07H501I', '1');
+
+INSERT INTO `PalestraDB`.`PersonalTrainer` (`CF`, `Nome`, `Cognome`, `Username`) VALUES ('RSSMRA91L11H501B', 'Mario', 'Rossi', 'Marios');
+INSERT INTO `PalestraDB`.`PersonalTrainer` (`CF`, `Nome`, `Cognome`, `Username`) VALUES ('RSSMTT80A01F205W', 'Mattia', 'Rossi', 'MattRos');
+
+INSERT INTO `PalestraDB`.`Scheda` (`DataInizio`, `DataFine`, `Cliente`) VALUES ('2023-05-01', '2020-05-02', 'SRGLVC00L11H501P');
+INSERT INTO `PalestraDB`.`Scheda` (`DataInizio`, `DataFine`, `Cliente`) VALUES ('2023-05-03', '2023-05-04', 'SRGLVC00L11H501P');
+INSERT INTO `PalestraDB`.`Scheda` (`DataInizio`, `DataFine`, `Cliente`) VALUES ('2023-06-03', NULL, 'MRTLCU00P01D612J');
+INSERT INTO `PalestraDB`.`Scheda` (`DataInizio`, `DataFine`, `Cliente`) VALUES ('2023-06-03', NULL, 'SRGLVC00L11H501P');
+INSERT INTO `PalestraDB`.`Scheda` (`DataInizio`, `DataFine`, `Cliente`) VALUES ('2023-06-04', NULL, 'DSNLSS00T07H501I');
+
+INSERT INTO `PalestraDB`.`SchedaEsercizi` (`dataInizioScheda`, `Cliente`, `Esercizio`, `Posizione`, `NumeroRipetizioni`, `NumeroSerie`) VALUES ('2023-05-01', 'SRGLVC00L11H501P', 'Lat Machine', '1', '12', '3');
+INSERT INTO `PalestraDB`.`SchedaEsercizi` (`dataInizioScheda`, `Cliente`, `Esercizio`, `Posizione`, `NumeroRipetizioni`, `NumeroSerie`) VALUES ('2023-05-01', 'SRGLVC00L11H501P', 'Military Press', '2', '11', '4');
+INSERT INTO `PalestraDB`.`SchedaEsercizi` (`dataInizioScheda`, `Cliente`, `Esercizio`, `Posizione`, `NumeroRipetizioni`, `NumeroSerie`) VALUES ('2023-05-01', 'SRGLVC00L11H501P', 'Panca Inclinata Manubri', '3', '6', '4');
+INSERT INTO `PalestraDB`.`SchedaEsercizi` (`dataInizioScheda`, `Cliente`, `Esercizio`, `Posizione`, `NumeroRipetizioni`, `NumeroSerie`) VALUES ('2023-05-01', 'SRGLVC00L11H501P', 'Piegamenti', '4', '8', '4');
+INSERT INTO `PalestraDB`.`SchedaEsercizi` (`dataInizioScheda`, `Cliente`, `Esercizio`, `Posizione`, `NumeroRipetizioni`, `NumeroSerie`) VALUES ('2023-05-03', 'SRGLVC00L11H501P', 'Curl a Martello', '1', '8', '3');
+INSERT INTO `PalestraDB`.`SchedaEsercizi` (`dataInizioScheda`, `Cliente`, `Esercizio`, `Posizione`, `NumeroRipetizioni`, `NumeroSerie`) VALUES ('2023-05-03', 'SRGLVC00L11H501P', 'Leg Press', '2', '8', '5');
+INSERT INTO `PalestraDB`.`SchedaEsercizi` (`dataInizioScheda`, `Cliente`, `Esercizio`, `Posizione`, `NumeroRipetizioni`, `NumeroSerie`) VALUES ('2023-06-03', 'MRTLCU00P01D612J', 'Alzate Laterali', '1', '10', '6');
+INSERT INTO `PalestraDB`.`SchedaEsercizi` (`dataInizioScheda`, `Cliente`, `Esercizio`, `Posizione`, `NumeroRipetizioni`, `NumeroSerie`) VALUES ('2023-06-03', 'MRTLCU00P01D612J', 'Crunch su Sbarra', '5', '12', '4');
+INSERT INTO `PalestraDB`.`SchedaEsercizi` (`dataInizioScheda`, `Cliente`, `Esercizio`, `Posizione`, `NumeroRipetizioni`, `NumeroSerie`) VALUES ('2023-06-03', 'MRTLCU00P01D612J', 'Dips', '2', '15', '4');
+INSERT INTO `PalestraDB`.`SchedaEsercizi` (`dataInizioScheda`, `Cliente`, `Esercizio`, `Posizione`, `NumeroRipetizioni`, `NumeroSerie`) VALUES ('2023-06-03', 'MRTLCU00P01D612J', 'Rematore', '4', '8', '4');
+INSERT INTO `PalestraDB`.`SchedaEsercizi` (`dataInizioScheda`, `Cliente`, `Esercizio`, `Posizione`, `NumeroRipetizioni`, `NumeroSerie`) VALUES ('2023-06-03', 'MRTLCU00P01D612J', 'Squat', '3', '10', '5');
+INSERT INTO `PalestraDB`.`SchedaEsercizi` (`dataInizioScheda`, `Cliente`, `Esercizio`, `Posizione`, `NumeroRipetizioni`, `NumeroSerie`) VALUES ('2023-06-03', 'SRGLVC00L11H501P', 'Alzate Frontali', '2', '8', '4');
+INSERT INTO `PalestraDB`.`SchedaEsercizi` (`dataInizioScheda`, `Cliente`, `Esercizio`, `Posizione`, `NumeroRipetizioni`, `NumeroSerie`) VALUES ('2023-06-03', 'SRGLVC00L11H501P', 'Croci ai Cavi', '3', '8', '4');
+INSERT INTO `PalestraDB`.`SchedaEsercizi` (`dataInizioScheda`, `Cliente`, `Esercizio`, `Posizione`, `NumeroRipetizioni`, `NumeroSerie`) VALUES ('2023-06-03', 'SRGLVC00L11H501P', 'Piegamenti', '1', '10', '3');
+INSERT INTO `PalestraDB`.`SchedaEsercizi` (`dataInizioScheda`, `Cliente`, `Esercizio`, `Posizione`, `NumeroRipetizioni`, `NumeroSerie`) VALUES ('2023-06-04', 'DSNLSS00T07H501I', 'Affondi Bulgari', '2', '8', '4');
+INSERT INTO `PalestraDB`.`SchedaEsercizi` (`dataInizioScheda`, `Cliente`, `Esercizio`, `Posizione`, `NumeroRipetizioni`, `NumeroSerie`) VALUES ('2023-06-04', 'DSNLSS00T07H501I', 'Leg Press', '3', '8', '4');
+INSERT INTO `PalestraDB`.`SchedaEsercizi` (`dataInizioScheda`, `Cliente`, `Esercizio`, `Posizione`, `NumeroRipetizioni`, `NumeroSerie`) VALUES ('2023-06-04', 'DSNLSS00T07H501I', 'Military Press', '4', '8', '3');
+INSERT INTO `PalestraDB`.`SchedaEsercizi` (`dataInizioScheda`, `Cliente`, `Esercizio`, `Posizione`, `NumeroRipetizioni`, `NumeroSerie`) VALUES ('2023-06-04', 'DSNLSS00T07H501I', 'Tricep Pushdown', '1', '12', '4');
+
+
+INSERT INTO `PalestraDB`.`SessioneDiAllenamento` (`DataSessione`, `OrarioInizio`, `OrarioFine`, `dataInizioScheda`, `Cliente`) VALUES ('2023-06-03', '16:50:26', '17:27:23', '2023-06-03', 'MRTLCU00P01D612J');
+INSERT INTO `PalestraDB`.`SessioneDiAllenamento` (`DataSessione`, `OrarioInizio`, `OrarioFine`, `dataInizioScheda`, `Cliente`) VALUES ('2023-06-04', '15:13:26', '15:43:43', '2023-06-03', 'MRTLCU00P01D612J');
+INSERT INTO `PalestraDB`.`SessioneDiAllenamento` (`DataSessione`, `OrarioInizio`, `OrarioFine`, `dataInizioScheda`, `Cliente`) VALUES ('2023-06-04', '15:07:32', '15:21:28', '2023-06-04', 'DSNLSS00T07H501I');
+
+
+CREATE DEFINER=`root`@`localhost` TRIGGER `Scheda_BEFORE_INSERT` BEFORE INSERT ON `Scheda` FOR EACH ROW BEGIN
+    -- Dichiarazione delle variabili
+    DECLARE var_count INT;
+
+    -- Verifica se esistono altre tuple per lo stesso cliente con DataFine NULL
+    SELECT COUNT(*) INTO var_count
+    FROM Scheda
+    WHERE Cliente = NEW.Cliente AND DataFine IS NULL;
+
+    -- Se esistono tuple con DataFine NULL, genera un errore
+    IF var_count > 0 THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Esiste già una scheda attiva per questo cliente.';
+    END IF;
+END
+
+
+CREATE DEFINER=`root`@`localhost` TRIGGER `EserciziScheda_BEFORE_INSERT` BEFORE INSERT ON `SchedaEsercizi` FOR EACH ROW BEGIN
+    DECLARE esercizioPresente INT;
+   DECLARE position_count INT;
+   
+    -- Verifica se l'attributo è presente nella Tabella2
+    SELECT COUNT(*) INTO esercizioPresente
+    FROM Esercizi
+    WHERE Nome = NEW.Esercizio;
+    
+    -- Se l'attributo non è presente, genera un errore e annulla l'inserimento
+    IF esercizioPresente = 0 THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'L\' esercizio che vuoi aggiungere non esiste.';
+    END IF;
+    
+    -- Controlla se esiste un esercizio con la stessa posizione e dataInizioScheda
+    SELECT COUNT(*) INTO position_count
+    FROM SchedaEsercizi
+    WHERE dataInizioScheda = NEW.dataInizioScheda
+        AND Posizione = NEW.Posizione;
+
+    -- Se esiste un esercizio con la stessa posizione, genera un errore
+    IF position_count > 0 THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Esiste già un esercizio con la stessa posizione in questa scheda.';
+    END IF;
+END
+
+
+CREATE DEFINER=`root`@`localhost` TRIGGER `before_insert_sessionediallenamento` BEFORE INSERT ON `SessioneDiAllenamento` FOR EACH ROW BEGIN
+    DECLARE num_schede INT;
+
+    -- Conta il numero di schede attive per il cliente
+    SELECT COUNT(*) INTO num_schede
+    FROM Scheda
+    WHERE Cliente = NEW.Cliente
+    AND DataFine IS NULL;
+
+    -- Se non esiste una scheda attiva, genera un errore
+    IF num_schede = 0 THEN
+        SIGNAL SQLSTATE '45021'
+            SET MESSAGE_TEXT = 'Non esiste una scheda attiva per il cliente.';
+    END IF;
+END
+
+
+CREATE DEFINER=`root`@`localhost` TRIGGER `check_eserciziSvolti_insert` BEFORE INSERT ON `EserciziSvolti` FOR EACH ROW BEGIN
+     DECLARE esercizio_count INT;
+    
+    -- Controlla se l'esercizio esiste nella tabella SchedaEsercizi
+    SELECT COUNT(*) INTO esercizio_count
+    FROM SchedaEsercizi
+    WHERE Cliente = NEW.Cliente
+        AND dataInizioScheda = NEW.dataInizioScheda
+        AND Esercizio = NEW.Esercizio;
+
+    -- Se l'esercizio non esiste, genera un errore
+    IF esercizio_count = 0 THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'L\'esercizio non esiste nella scheda.';
+    END IF;
+END
+
+
+CREATE DEFINER=`root`@`localhost` TRIGGER `before_update_esercizisvolti` BEFORE UPDATE ON `EserciziSvolti` FOR EACH ROW BEGIN
+    DECLARE num_serie INT;
+
+    -- Ottieni il numero di serie dall'esercizischeda
+    SELECT NumeroSerie INTO num_serie
+    FROM SchedaEsercizi
+    WHERE Esercizio = NEW.Esercizio
+    AND dataInizioScheda = NEW.dataInizioScheda
+    AND Cliente = NEW.Cliente;
+
+    -- Verifica se la serie corrente è maggiore del numero di serie
+    IF NEW.SerieCorrente > num_serie THEN
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = 'La serie corrente è maggiore del numero di serie consentito.';
+    END IF;
+END

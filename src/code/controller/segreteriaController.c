@@ -1,16 +1,14 @@
-#include "moderatoreController.h"
+#include "segreteriaController.h"
 
-static bool creaStanza(){
-    char nomeStanza[VARCHAR45];
+static bool registraNuovoCliente(){
+    newUser user;
     do {
-        memset(&nomeStanza, 0, sizeof(nomeStanza));
-        if(getInput("Inserire il nome per la nuova stanza di gioco:\n>> ", nomeStanza, VARCHAR45)){
-            if(createNewGameRoom(nomeStanza)){
-                printSuccess("Nuova Stanza Creata con successo!");
+        memset(&user, 0, sizeof(newUser));
+        if(promptReg(&user)){
+            if(registerNewCustomer(user)){
+                printSuccess("Nuovo cliente registrato correttamente");
                 return true;
             }
-        }else{
-            printError("Nome stanza di gioco non valido");
         }
         return false;
     } while (true) ;
@@ -20,12 +18,12 @@ bool registraNuovoModeratore(){
     Credentials creds;
     do {
         memset(&creds, 0, sizeof(Credentials));
-        if(promptLoginAndRegistration(&creds)){
-            if(registerNewModder(creds)){
+        /*if(promptLogin(&user)){
+            if(registerNewCustomer(user)){
                 printSuccess("Nuovo moderatore registrato correttamente");
                 return true;
             }
-        }
+        }*/
         return false;
     } while (true) ;
 }
@@ -43,13 +41,13 @@ static bool vediReport(){
 
 
 
-void moderatoreController(char *username){
+void segreteriaController(char *username){
     bool prev_error = false;
 clean_up:
     clearScreen();
-    showAppTitle();
+    showMyTitle();
     puts("\t\t\t\t|‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾|");
-    puts("\t\t\t\t|         AREA MODERATORI         |");
+    puts("\t\t\t\t|         AREA SEGRETERIA         |");
 	puts("\t\t\t\t|_________________________________|");
     printf("\t\t\t\t     Bentornat* %s.\n\n",username);
     int input;
@@ -64,11 +62,11 @@ clean_up:
             prev_error = true;
             goto clean_up;
         }
-        input = promptMenuModeratore();
+        input = promptMenuSegreteria();
         switch (input)
         {
         case 1:
-            if(!creaStanza()){
+            if(!registraNuovoCliente()){
                 failed_attempts ++;
             }
             break;

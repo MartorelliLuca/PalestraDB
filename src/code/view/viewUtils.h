@@ -4,15 +4,13 @@
 
 void clearScreen() ;
 
-void printBoldRed(char *str);
+void printBoldGreen(char *str);
 
 void printError(char *errorMessage);
 
 void printSuccess (char *successMessage);
 
-void showAppTitle() ;
-
-void printWinningTrophy();
+void showMyTitle() ;
 
 void printConqueredTerritory();
 

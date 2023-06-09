@@ -1,4 +1,4 @@
-#include "giocatoreController.h"
+#include "clientiController.h"
 
 char *g_username;
 
@@ -52,9 +52,6 @@ static bool attaccaTerritorio(){
                     puts("");
                     puts("");
                     if(i_won == 1){
-                        printWinningTrophy();
-                        puts("");
-                        puts("");
                     }
                 }
                 return true;
@@ -127,7 +124,7 @@ static bool mostraAdiacenzeTerritorio(){
 }
 
 //[7-3] VISUALIZZA STORICO PARTITE
-static bool visualizzaStoricoPartite(){
+static bool scegliSchedaArchiviata(){
     printSuccess("-- GENERAZIONE STORICO PARTITE INIZIATA --");
     if(showMatchHistory(g_username)){
         printSuccess("-- GENERAZIONE STORICO PARTITE TERMINATA --");
@@ -146,7 +143,7 @@ void giocatoreInStanzaController(char *nomeStanza, int idPartita){
     bool prev_error = false;
 clean_up:
     clearScreen();
-    showAppTitle();
+    showMyTitle();
     printf("\t\t\t\t|‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾|\n");
     printf("\t\t\t\t|   SEI IN UNA STANZA DI GIOCO    |   NomeStanza: %s\n",nomeStanza);
 	printf("\t\t\t\t|_________________________________|   CodicePartita: %d\n",idPartita);
@@ -196,7 +193,7 @@ clean_up:
             }
             break;
         case 7:
-            if(!visualizzaStoricoPartite()){
+            if(!scegliSchedaArchiviata()){
                 failed_attempts ++;
             }
             break;
@@ -230,7 +227,7 @@ static bool mostraStanzeDisponibili(){
 }
 
 //[1] ENTRA IN UNA STANZA DI GIOCO
-static bool entraInStanza(){
+static bool iniziaSessione(){
     char nomeStanza[VARCHAR45];
     char input;
     int idPartita;
@@ -266,14 +263,14 @@ static bool entraInStanza(){
     } while (true) ;
 }
 
-void giocatoreController(char* username){
+void clientiController(char* username){
     g_username = username;
     bool prev_error = false;
 clean_up:
     clearScreen();
-    showAppTitle();
+    showMyTitle();
     puts("\t\t\t\t|‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾|");
-    puts("\t\t\t\t|         AREA GIOCATORI          |");
+    puts("\t\t\t\t|          AREA  CLIENTI          |");
 	puts("\t\t\t\t|_________________________________|");
     printf("\t\t\t\t     Bentornat* %s.\n\n",username);
     int input;
@@ -289,11 +286,11 @@ clean_up:
             prev_error = true;
             goto clean_up;
         }
-        input = promptMenuGiocatore();
+        input = promptMenuClienti();
         switch (input)
         {
         case 1:
-            if(!entraInStanza()){
+            if(!iniziaSessione()){
                 failed_attempts ++;
                 break;
             }
@@ -304,7 +301,7 @@ clean_up:
             }
             break;
         case 3:
-            if(!visualizzaStoricoPartite()){
+            if(!scegliSchedaArchiviata()){
                 failed_attempts ++;
             }
             break;

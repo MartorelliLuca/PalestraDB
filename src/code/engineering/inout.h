@@ -16,7 +16,9 @@ bool getInput(char *requestString, char *resultBuffer, int bufferSize);
 
 bool getInteger(char* domanda, int *integerPtr);
 
-bool getCredentials(Credentials *creds);
+bool getLoginCredentials(Credentials *creds);
+
+bool getRegCredentials(newUser *user);
 
 bool getAttackInfo(char *terr1, char *terr2, int *num_carri);
 

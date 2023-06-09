@@ -6,5 +6,5 @@
 #include "../engineering/inout.h"
 #include "viewUtils.h"
 
-bool promptLoginAndRegistration(Credentials *creds) ;
+bool promptLogin(Credentials *creds) ;
 int promptInitialMenu();

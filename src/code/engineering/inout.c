@@ -2,7 +2,7 @@
 
 bool getInput(char *requestString, char *resultBuffer, int bufferSize) {
 
-    printBoldRed(requestString) ;
+    printBoldGreen(requestString) ;
 
     // +1 is for \n special char
     char inputBuffer[bufferSize + 1] ;
@@ -79,13 +79,40 @@ bool getMoveArmyInfo(int *num_carri, char *terr1, char *terr2){
     return true ;
 }
 
-bool getCredentials(Credentials *creds){
+bool getLoginCredentials(Credentials *creds){
     if (!getInput("Username: ", creds->username, USERNAME_MAX_SIZE)) {
         printError("Errore Lettura Username") ;
         return false ;
     }
     if (!getInput("Password: ", creds->password, PASSWORD_MAX_SIZE)) {
         printError("Errore Lettura Password") ;
+        return false ;
+    }
+    return true ;
+}
+
+bool getRegCredentials(newUser *user){
+    if (!getInput("Codice Fiscale: ", user->cf, USERNAME_MAX_SIZE)) {
+        printError("Errore Lettura Codice Fiscale") ;
+        return false ;
+    }
+    if (!getInput("Nome: ", user->nome, NOME_MAX_SIZE)) {
+        printError("Errore Lettura Nome");
+        return false ;
+    }
+
+    if (!getInput("Cognome: ", user->cognome, COGNOME_MAX_SIZE)) {
+        printError("Errore Lettura Cognome");
+        return false ;
+    }
+
+    if (!getInput("Username: ", user->username, USERNAME_MAX_SIZE)) {
+        printError("Errore Lettura Username");
+        return false ;
+    }
+
+    if (!getInput("Password: ", user->password, PASSWORD_MAX_SIZE)) {
+        printError("Errore Lettura Password");
         return false ;
     }
     return true ;

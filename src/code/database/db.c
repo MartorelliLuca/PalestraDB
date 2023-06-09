@@ -542,35 +542,47 @@ err1:
 	return false;
 }
 
-bool registerNewModder(Credentials creds){
+bool registerNewCustomer(newUser user){
 	MYSQL_STMT* prepared_stmt;
-	MYSQL_BIND param[2];
+	MYSQL_BIND param[5];
 
 	// Prepare stored procedure call
-	if (!setup_prepared_stmt(&prepared_stmt, "call registra_nuovo_moderatore(?, ?)", conn)) {
-		finish_with_stmt_error(conn, prepared_stmt, "Unable to initialize prepared statement for procedure: registra_nuovo_moderatore", false);
+	if (!setup_prepared_stmt(&prepared_stmt, "call aggiungi_cliente(?, ?, ?, ?, ?)", conn)) {
+		finish_with_stmt_error(conn, prepared_stmt, "Unable to initialize prepared statement for procedure: aggiungi_cliente", false);
 		goto err1;
 	}
 	// Prepare parameters
 	memset(param, 0, sizeof(param));
 
 	param[0].buffer_type = MYSQL_TYPE_VAR_STRING; // IN
-	param[0].buffer = creds.username;
-	param[0].buffer_length = strlen(creds.username);
+	param[0].buffer = user.cf;
+	param[0].buffer_length = strlen(user.cf);
 
 	param[1].buffer_type = MYSQL_TYPE_VAR_STRING; // IN
-	param[1].buffer = creds.password;
-	param[1].buffer_length = strlen(creds.password);
+	param[1].buffer = user.nome;
+	param[1].buffer_length = strlen(user.nome);
+
+	param[2].buffer_type = MYSQL_TYPE_VAR_STRING; // IN
+	param[2].buffer = user.cognome;
+	param[2].buffer_length = strlen(user.cognome);
+
+	param[3].buffer_type = MYSQL_TYPE_VAR_STRING; // IN
+	param[3].buffer = user.username;
+	param[3].buffer_length = strlen(user.username);
+
+	param[4].buffer_type = MYSQL_TYPE_VAR_STRING; // IN
+	param[4].buffer = user.password;
+	param[4].buffer_length = strlen(user.password);
 
 	// Binding
 	if (mysql_stmt_bind_param(prepared_stmt, param) != 0) {
-		finish_with_stmt_error(conn, prepared_stmt, "Could not bind parameters in procedure: registra_nuovo_moderatore", true);
+		finish_with_stmt_error(conn, prepared_stmt, "Could not bind parameters in procedure: aggiungi_cliente", true);
 		goto err;
 	}
 
 	// Execution
 	if (mysql_stmt_execute(prepared_stmt) != 0) {
-		print_stmt_error(prepared_stmt, "Error in execution for procedure: registra_nuovo_moderatore");
+		print_stmt_error(prepared_stmt, "Error in execution for procedure: aggiungi_cliente");
 		goto err;
 	}
 
@@ -584,7 +596,7 @@ err1:
 
 bool registerNewPlayer(Credentials creds){
 	MYSQL_STMT* prepared_stmt;
-	MYSQL_BIND param[2];
+	MYSQL_BIND param[4];
 
 	// Prepare stored procedure call
 	if (!setup_prepared_stmt(&prepared_stmt, "call registra_nuovo_giocatore(?, ?)", conn)) {

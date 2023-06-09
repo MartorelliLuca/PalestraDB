@@ -1,22 +1,28 @@
 #include "loginAndRegistrationView.h"
 
+bool promptReg(newUser *user) {
+    printBoldGreen("Inserire le credenziali per registrarsi\n");
+
+    return getRegCredentials(user);
+
+}
 
 
-bool promptLoginAndRegistration(Credentials *creds) {
-    printBoldRed("Inserire le credenziali\n");
+bool promptLogin(Credentials *creds) {
+    printBoldGreen("Inserire le credenziali\n");
 
-    return getCredentials(creds);
+    return getLoginCredentials(creds);
 
 }
 
 int promptInitialMenu(){
     int input;
-    printBoldRed("Cosa vuoi fare? \n");
-    printBoldRed("[1] ");
+    printBoldGreen("Cosa vuoi fare? \n");
+    printBoldGreen("[1] ");
     printf("LOGIN\n");
-    printBoldRed("[2] ");
+    printBoldGreen("[2] ");
     printf("USCIRE\n");
-    printBoldRed(">> ");
+    printBoldGreen(">> ");
     if(!getInteger("", &input)){
             return -1;
     }

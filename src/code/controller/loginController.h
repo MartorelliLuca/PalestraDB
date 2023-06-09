@@ -10,8 +10,8 @@
 #include "../engineering/inout.h"
 #include "../view/viewUtils.h"
 #include "../model/credentials.h"
-#include "giocatoreController.h"
-#include "moderatoreController.h"
+#include "clientiController.h"
+#include "segreteriaController.h"
 #include <stdbool.h>
 
 

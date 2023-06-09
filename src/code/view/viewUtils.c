@@ -4,7 +4,7 @@ void clearScreen() {
     printf("\033[2J\033[H");
 }
 
-void printBoldRed(char *str){
+void printBoldGreen(char *str){
     printf("\033[1;32m%s\033[0m",str);
 }
 
@@ -22,7 +22,7 @@ void printSuccess (char *successMessage){
     puts("");
 }
 
-void showAppTitle() {
+void showMyTitle() {
     printf("\033[1;32m");
     puts("");
     puts("                                   ⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠿⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿");
@@ -40,32 +40,11 @@ void showAppTitle() {
     puts("                                   ⣿⠀⠀⠀⠀⠀⠀⣠⡾⠋⠉⠁⣸⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿");
     puts("                                   ⣿⠀⠀⠀⠀⣀⣴⠏⠀⠀⠀⣰⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿");
     puts("                                   ⣿⣤⣤⣴⣾⣯⣤⣤⣤⣤⣴⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿");
-    puts("                                   By Luca Martorelli [m:0281213]");
+    puts("                                      By Luca Martorelli [m:0281213]");
     puts("");
     printf("\033[0m");
 }
 
-void printWinningTrophy() {
-    puts("\n");
-    printf("\033[43m%s\033[0m","\t\t\t\t        CONGRATULAZIONI!        ");puts("");
-    printf("\033[43m%s\033[0m","\t\t\t\t ⣿⣿⣿⣿⡿⠿⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⠿⢿⣿⣿⣿⣿ ");puts("");
-    printf("\033[43m%s\033[0m","\t\t\t\t ⣿⣿⣿⡏⢠⡶⠀⣿⡄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢠⣿⠀⢶⡄⢹⣿⣿⣿ ");puts("");
-    printf("\033[43m%s\033[0m","\t\t\t\t ⣿⣿⣿⡇⢹⣿⣾⣿⣧⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣼⣿⣷⣿⡏⢸⣿⣿⣿ ");puts("");
-    printf("\033[43m%s\033[0m","\t\t\t\t ⣿⣿⣿⣿⡀⠻⣿⣿⣿⣆⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣰⣿⣿⣿⠟⢀⣿⣿⣿⣿ ");puts("");
-    printf("\033[43m%s\033[0m","\t\t\t\t ⣿⣿⣿⣿⣿⣄⠙⠻⣿⣿⣆⠀⠀⠀⠀⠀⠀⠀⠀⣰⣿⣿⠟⠋⣠⣿⣿⣿⣿⣿ ");puts("");
-    printf("\033[43m%s\033[0m","\t\t\t\t ⣿⣿⣿⣿⣿⣿⣿⣦⣄⣉⣻⣦⡀⠀⠀⠀⠀⢀⣴⣟⣉⣠⣴⣿⣿⣿⣿⣿⣿⣿ ");puts("");
-    printf("\033[43m%s\033[0m","\t\t\t\t ⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣶⣶⣶⣶⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿ ");puts("");
-    printf("\033[43m%s\033[0m","\t\t\t\t ⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣧⣤⣤⣼⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿ ");puts("");
-    printf("\033[43m%s\033[0m","\t\t\t\t ⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡟⠀⠀⢻⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿ ");puts("");
-    printf("\033[43m%s\033[0m","\t\t\t\t ⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠃⠀⠀⠘⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿ ");puts("");
-    printf("\033[43m%s\033[0m","\t\t\t\t ⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⠿⠿⠿⠿⠿⠿⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿ ");puts("");
-    printf("\033[43m%s\033[0m","\t\t\t\t ⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠿⠿⠿⠿⠿⠿⠿⠿⠿⠿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿ ");puts("");
-    printf("\033[43m%s\033[0m","\t\t\t\t ⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠀⣴⣶⣶⣶⣶⣶⣶⣦⠀⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿ ");puts("");
-    printf("\033[43m%s\033[0m","\t\t\t\t ⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠀⠻⠿⠿⠿⠿⠿⠿⠟⠀⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿ ");puts("");
-    printf("\033[43m%s\033[0m","\t\t\t\t ⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿ ");puts("");
-    printf("\033[43m%s\033[0m","\t\t\t\t           HAI VINTO!           ");puts("");
-    puts("\n");
-}
 
 void printConqueredTerritory() {
     puts("\n");

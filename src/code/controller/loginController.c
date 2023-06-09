@@ -49,23 +49,23 @@ static bool switchRole(Role role) {
 
 static bool successLogin(Role myRole, char* username) {
     clearScreen() ;
-    showAppTitle() ;
+    showMyTitle() ;
     bool flag = false;
     if (switchRole(myRole) == false) {
         return false;
     }
 
     switch (myRole) {
-        case SEGRETERIA :
-            //moderatoreController(username) ;
+        case  PT:
+            //ptController(username) ;
             flag = true ;
             break;
-        case PT :
-            //moderatoreController(username) ;
+        case SEGRETERIA :
+            segreteriaController(username) ;
             flag = true ;
             break;
         case CLIENTI :
-            //giocatoreController(username) ;
+            clientiController(username) ;
             flag = true ;
             break;
         case UTENTI :
@@ -79,7 +79,7 @@ static bool successLogin(Role myRole, char* username) {
 
 static void login(){
     clearScreen();
-    showAppTitle();
+    showMyTitle();
     puts("\t\t\t\t|‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾|");
 	puts("\t\t\t\t|             LOGIN               |");
 	puts("\t\t\t\t|_________________________________|\n");
@@ -93,7 +93,7 @@ static void login(){
         memset(&creds, 0, sizeof(Credentials)) ;
         Role myRole = UTENTI ;
 
-        if (promptLoginAndRegistration(&creds)) {
+        if (promptLogin(&creds)) {
             myRole = logAsUser(creds) ;
             if (myRole == UTENTI) {
                 printError("LOGIN FALLITO: Username e/o Password non corrispondono ad alcun utente") ;
@@ -112,7 +112,7 @@ static void login(){
 
 static bool registration(){
     clearScreen();
-    showAppTitle();
+    showMyTitle();
     puts("\t\t\t\t|‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾|");
 	puts("\t\t\t\t|      REGISTRAZIONE CLIENTE      |");
 	puts("\t\t\t\t|_________________________________|\n");
@@ -123,7 +123,7 @@ static bool registration(){
             return false;
         }
         memset(&creds, 0, sizeof(Credentials));
-        if(promptLoginAndRegistration(&creds)){
+        if(promptLogin(&creds)){
             if(registerNewPlayer(creds)){
                 printSuccess("Giocatore registrato correttamente");
                 return true;
@@ -136,7 +136,7 @@ static bool registration(){
 
 static bool pt_registration(){
     clearScreen();
-    showAppTitle();
+    showMyTitle();
     puts("\t\t\t\t|‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾|");
 	puts("\t\t\t\t|  REGISTRAZIONE PERSONAL TRAINER  |");
 	puts("\t\t\t\t|__________________________________|\n");
@@ -147,7 +147,7 @@ static bool pt_registration(){
             return false;
         }
         memset(&creds, 0, sizeof(Credentials));
-        if(promptLoginAndRegistration(&creds)){
+        if(promptLogin(&creds)){
             if(registerNewPlayer(creds)){
                 printSuccess("Giocatore registrato correttamente");
                 return true;
@@ -163,7 +163,7 @@ static bool pt_registration(){
 void loginController() {
 main_menu:
     clearScreen();
-    showAppTitle();
+    showMyTitle();
     puts("\t\t\t\t|‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾|");
 	puts("\t\t\t\t|         MENU PRINCIPALE         |");
 	puts("\t\t\t\t|_________________________________|\n");

@@ -2,6 +2,6 @@
 #include "../database/dbUtils.h"
 #include "../database/db.h"
 #include "../view/viewUtils.h"
-#include "../view/menuGiocatore.h"
+#include "../view/menuSegreteria.h"
 
-void giocatoreController(char* username);
+void segreteriaController(char *username);

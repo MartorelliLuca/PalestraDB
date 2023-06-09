@@ -14,7 +14,7 @@ Role logAsUser(Credentials creds);
 
 bool registerNewPlayer(Credentials creds);
 
-bool registerNewModder(Credentials creds);
+bool registerNewCustomer(newUser user);
 
 bool createNewGameRoom(char *nomeStanza);
 

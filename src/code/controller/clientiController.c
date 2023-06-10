@@ -1,6 +1,8 @@
 #include "clientiController.h"
 
 char *g_username;
+char *g_codFiscale;
+
 
 //[1] VEDI STATO DI GIOCO
 static bool vediStatoDiGioco(){
@@ -216,18 +218,20 @@ clean_up:
 }
 
 //[2] MOSTRA STANZE DISPONIBILI
-static bool mostraStanzeDisponibili(){
-    printSuccess("-- GENERAZIONE LISTA STANZE DISPONIBILI INIZIATA --");
-    if(showAvailableGameRooms()){
-        printSuccess("-- GENERAZIONE LISTA STANZE DISPONIBILI TERMINATA --");
+static bool mostraSchedaAttiva(User *loggedUser){
+    printSuccess("-- ECCO LA TUA SCHEDA ATTIVA --");
+    if (visualizzaSchedaAttiva(loggedUser))
+    {
         return true;
-    }else{
+    }
+    else
+    {
         return false;
     }
 }
 
 //[1] ENTRA IN UNA STANZA DI GIOCO
-static bool iniziaSessione(){
+static bool iniziaSessione(User *loggedUser){
     char nomeStanza[VARCHAR45];
     char input;
     int idPartita;
@@ -245,7 +249,7 @@ static bool iniziaSessione(){
                     }
                     if(getInput("Vuoi vedere la lista delle stanze disponibili? (s/n): ", &input, 2)){
                         if(input == 's'){
-                            mostraStanzeDisponibili();
+                            mostraSchedaAttiva(loggedUser);
                             break;
                         }else if(input == 'n'){
                             break;
@@ -272,10 +276,28 @@ clean_up:
     puts("\t\t\t\t|‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾|");
     puts("\t\t\t\t|          AREA  CLIENTI          |");
 	puts("\t\t\t\t|_________________________________|");
-    printf("\t\t\t\t     Bentornat* %s.\n\n",username);
+    printf("\t\t\t\t     Bentornato/a %s.\n\n",username);
     int input;
     int failed_attempts = 0;
-    
+
+
+     //verifica di non aver fatto una cazzata
+    User* loggedUser = malloc(sizeof(User));
+    if (loggedUser == NULL) {
+        printf("Errore: impossibile allocare memoria per la struttura loggedUser.\n");
+        exit(EXIT_FAILURE);
+    }
+    strcpy(loggedUser->username, username);
+    if(!getCustomerCf(loggedUser)){
+        printf("Codice Fiscale non preso.");
+        sleep(5);
+        return;
+    }
+    puts("");
+    puts("");
+    puts("");
+    puts("");
+    printf("\033[47m\033[30mCODICE FISCALE: %s\n\n\033[0m", loggedUser->cf);
     while(true)
     {
         if(prev_error){
@@ -290,13 +312,13 @@ clean_up:
         switch (input)
         {
         case 1:
-            if(!iniziaSessione()){
+            if(!iniziaSessione(loggedUser)){
                 failed_attempts ++;
                 break;
             }
             goto clean_up;
         case 2:
-            if(!mostraStanzeDisponibili()){
+            if(!mostraSchedaAttiva(loggedUser)){
                 failed_attempts ++;
             }
             break;

@@ -1,30 +1,48 @@
 #include "segreteriaController.h"
 
 static bool registraNuovoCliente(){
-    newUser user;
+    User user;
+    clearScreen();
+    showMyTitle();
+    puts("\t\t\t\t|‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾|");
+	puts("\t\t\t\t|      REGISTRAZIONE CLIENTE      |");
+	puts("\t\t\t\t|_________________________________|\n");
+    int failed_attempts = 0;
     do {
-        memset(&user, 0, sizeof(newUser));
+        if(failed_attempts == 3){
+            return false;
+        }
+        memset(&user, 0, sizeof(User));
         if(promptReg(&user)){
             if(registerNewCustomer(user)){
                 printSuccess("Nuovo cliente registrato correttamente");
                 return true;
             }
         }
-        return false;
+        failed_attempts ++;
     } while (true) ;
 }
 
-bool registraNuovoModeratore(){
-    Credentials creds;
+static bool registraNuovoPT(){
+    clearScreen();
+    showMyTitle();
+    puts("\t\t\t\t|‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾|");
+	puts("\t\t\t\t|  REGISTRAZIONE PERSONAL TRAINER  |");
+	puts("\t\t\t\t|__________________________________|\n");
+    User user;
+    int failed_attempts = 0;
     do {
-        memset(&creds, 0, sizeof(Credentials));
-        /*if(promptLogin(&user)){
+        if(failed_attempts == 3){
+            return false;
+        }
+        memset(&user, 0, sizeof(User));
+        if(promptReg(&user)){
             if(registerNewCustomer(user)){
-                printSuccess("Nuovo moderatore registrato correttamente");
+                printSuccess("Nuovo PT registrato correttamente");
                 return true;
             }
-        }*/
-        return false;
+        }
+        failed_attempts ++;
     } while (true) ;
 }
 
@@ -49,7 +67,7 @@ clean_up:
     puts("\t\t\t\t|‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾|");
     puts("\t\t\t\t|         AREA SEGRETERIA         |");
 	puts("\t\t\t\t|_________________________________|");
-    printf("\t\t\t\t     Bentornat* %s.\n\n",username);
+    printf("\t\t\t\t      Bentornata %s.\n\n",username);
     int input;
     int failed_attempts = 0;
     while(true)
@@ -71,18 +89,13 @@ clean_up:
             }
             break;
         case 2:
-            if(!vediReport()){
+            if(!registraNuovoPT()){
                 failed_attempts ++;
             }
             break;
         case 3:
-            if(!registraNuovoModeratore()){
-                failed_attempts ++;
-            }
-            break;
-        case 4:
             return;
-        case 5:
+        case 4:
             goto clean_up;
         default:
             printError("Scegli tra le opzioni proposte!");

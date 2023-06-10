@@ -50,46 +50,6 @@ err1:
 }
 
 
-bool showAdjacentTerritories(char *terr){
-    MYSQL_STMT* prepared_stmt;
-	MYSQL_BIND param[1];
-
-	// Prepare stored procedure call
-	if (!setup_prepared_stmt(&prepared_stmt, "call mostra_adiacenze_territorio(?)", conn)) {
-		finish_with_stmt_error(conn, prepared_stmt, "Unable to initialize prepared statement for procedure: mostra_adiacenze_territorio", false);
-		goto err1;
-	}
-
-	// Prepare parameters
-	memset(param, 0, sizeof(param));
-
-	param[0].buffer_type = MYSQL_TYPE_VAR_STRING; // IN
-	param[0].buffer = terr;
-	param[0].buffer_length = strlen(terr);
-
-	// Binding
-	if (mysql_stmt_bind_param(prepared_stmt, param) != 0) {
-		finish_with_stmt_error(conn, prepared_stmt, "Could not bind parameters in procedure: mostra_adiacenze_territorio", true);
-		goto err;
-	}
-
-	// Execution
-	if (mysql_stmt_execute(prepared_stmt) != 0) {
-		print_stmt_error(prepared_stmt, "Error in execution for procedure: mostra_adiacenze_territorio");
-		goto err;
-	}
-
-	// Dump of the result set
-	dump_result_set(conn, prepared_stmt, "\n\tTERRITORI ADIACENTI\n");
-	mysql_stmt_next_result(prepared_stmt);
-	mysql_stmt_close(prepared_stmt);
-	return true;
-err:
-	mysql_stmt_close(prepared_stmt);
-err1:
-	return false;
-}
-
 bool placeArmyOnTerritory(char *username, int *num_carri, char *terr){
 	MYSQL_STMT* prepared_stmt;
 	MYSQL_BIND param[3];
@@ -309,30 +269,45 @@ err1:
 	return false;
 }
 
-bool showAvailableGameRooms(){
-	MYSQL_STMT* prepared_stmt;
+bool visualizzaSchedaAttiva(User *loggedUser){
+    MYSQL_STMT* prepared_stmt;
+    MYSQL_BIND param[1];
 
-	// Prepare stored procedure call
-	if (!setup_prepared_stmt(&prepared_stmt, "call ottieni_lista_stanze_disponibili()", conn)) {
-		finish_with_stmt_error(conn, prepared_stmt, "Unable to initialize prepared statement for procedure: ottieni_lista_stanze_disponibili", false);
-		goto err1;
-	}
+    // Prepare stored procedure call
+    if (!setup_prepared_stmt(&prepared_stmt, "call visualizza_scheda_attiva(?)", conn)) {
+        finish_with_stmt_error(conn, prepared_stmt, "Unable to initialize prepared statement for procedure: visualizza_scheda_attiva", false);
+        goto err1;
+    }
 
-	// Execution
-	if (mysql_stmt_execute(prepared_stmt) != 0) {
-		print_stmt_error(prepared_stmt, "Error in execution for procedure: ottieni_lista_stanze_disponibili");
-		goto err;
-	}
+    // Prepare parameters
+    memset(param, 0, sizeof(param));
 
-	// Dump of the result set
-	dump_result_set(conn, prepared_stmt, "\n\tPARTITE DISPONIBILI\n");
+    param[0].buffer_type = MYSQL_TYPE_VAR_STRING; // IN
+    param[0].buffer = loggedUser->cf;
+    param[0].buffer_length = strlen(loggedUser->cf);
+
+    // Binding
+    if (mysql_stmt_bind_param(prepared_stmt, param) != 0) {
+        finish_with_stmt_error(conn, prepared_stmt, "Could not bind parameters in procedure: visualizza_scheda_attiva", true);
+        goto err;
+    }
+
+    // Execution
+    if (mysql_stmt_execute(prepared_stmt) != 0) {
+        print_stmt_error(prepared_stmt, "Error in execution for procedure: visualizza_scheda_attiva");
+        goto err;
+    }
+
+    // Fetch and print the results
+	dump_result_set(conn, prepared_stmt, "");
 	mysql_stmt_next_result(prepared_stmt);
-	mysql_stmt_close(prepared_stmt);
-	return true;
+
+    mysql_stmt_close(prepared_stmt);
+    return true;
 err:
-	mysql_stmt_close(prepared_stmt);
+    mysql_stmt_close(prepared_stmt);
 err1:
-	return false;
+    return false;
 }
 
 bool leaveMatch(char *username){
@@ -542,7 +517,7 @@ err1:
 	return false;
 }
 
-bool registerNewCustomer(newUser user){
+bool registerNewCustomer(User user){
 	MYSQL_STMT* prepared_stmt;
 	MYSQL_BIND param[5];
 
@@ -634,6 +609,118 @@ err:
 err1:
 	return false;
 }
+
+bool showAdjacentTerritories(char *terr){
+    MYSQL_STMT* prepared_stmt;
+	MYSQL_BIND param[1];
+
+	// Prepare stored procedure call
+	if (!setup_prepared_stmt(&prepared_stmt, "call mostra_adiacenze_territorio(?)", conn)) {
+		finish_with_stmt_error(conn, prepared_stmt, "Unable to initialize prepared statement for procedure: mostra_adiacenze_territorio", false);
+		goto err1;
+	}
+
+	// Prepare parameters
+	memset(param, 0, sizeof(param));
+
+	param[0].buffer_type = MYSQL_TYPE_VAR_STRING; // IN
+	param[0].buffer = terr;
+	param[0].buffer_length = strlen(terr);
+
+	// Binding
+	if (mysql_stmt_bind_param(prepared_stmt, param) != 0) {
+		finish_with_stmt_error(conn, prepared_stmt, "Could not bind parameters in procedure: mostra_adiacenze_territorio", true);
+		goto err;
+	}
+
+	// Execution
+	if (mysql_stmt_execute(prepared_stmt) != 0) {
+		print_stmt_error(prepared_stmt, "Error in execution for procedure: mostra_adiacenze_territorio");
+		goto err;
+	}
+
+	// Dump of the result set
+	dump_result_set(conn, prepared_stmt, "\n\tTERRITORI ADIACENTI\n");
+	mysql_stmt_next_result(prepared_stmt);
+	mysql_stmt_close(prepared_stmt);
+	return true;
+err:
+	mysql_stmt_close(prepared_stmt);
+err1:
+	return false;
+}
+
+bool getCustomerCf(User* loggedUser) {
+    MYSQL_STMT* prepared_stmt;
+    MYSQL_BIND param[2];
+
+    // Prepare stored procedure call
+    if (!setup_prepared_stmt(&prepared_stmt, "call prendi_cliente_cf(?)", conn)) {
+        finish_with_stmt_error(conn, prepared_stmt, "Unable to initialize prepared statement for procedure: prendi_cliente_cf", false);
+        goto err1;
+    }
+
+    // Prepare parameters
+    memset(param, 0, sizeof(param));
+
+    User* lUser = malloc(sizeof(User));
+    if (lUser == NULL) {
+        printf("Errore: impossibile allocare memoria per la struttura lUser.\n");
+        exit(EXIT_FAILURE);
+    }
+
+    param[0].buffer_type = MYSQL_TYPE_VAR_STRING; // IN
+    param[0].buffer = loggedUser->username;
+    param[0].buffer_length = strlen(loggedUser->username);
+
+    param[1].buffer_type = MYSQL_TYPE_VAR_STRING; // OUT
+    param[1].buffer = lUser->cf;
+    param[1].buffer_length = sizeof(lUser->cf);
+
+    // Binding
+    if (mysql_stmt_bind_param(prepared_stmt, param) != 0) {
+        print_stmt_error(prepared_stmt, "Could not bind parameters in procedure: login");
+        goto err;
+    }
+
+    // Execution
+    if (mysql_stmt_execute(prepared_stmt) != 0) {
+        print_stmt_error(prepared_stmt, "Error in execution for procedure: login");
+        goto err;
+    }
+
+    // Prepare output parameters
+    memset(param, 0, sizeof(param));
+    param[0].buffer_type = MYSQL_TYPE_VAR_STRING; // OUT
+    param[0].buffer = lUser->cf;
+    param[0].buffer_length = sizeof(lUser->cf);
+
+    if (mysql_stmt_bind_result(prepared_stmt, param)) {
+        print_stmt_error(prepared_stmt, "Could not retrieve output in procedure: prendi_cliente_cf");
+        goto err;
+    }
+
+    // Retrieve output parameter
+    if (mysql_stmt_fetch(prepared_stmt)) {
+        print_stmt_error(prepared_stmt, "Could not buffer results in procedure: prendi_cliente_cf");
+        goto err;
+    }
+
+    strcpy(loggedUser->cf, lUser->cf);
+
+    mysql_stmt_close(prepared_stmt);
+    free(lUser);
+    return true;
+
+err:
+    mysql_stmt_close(prepared_stmt);
+err1:
+    free(lUser);
+    return false;
+}
+
+	
+
 
 Role logAsUser(Credentials creds) {
 	MYSQL_STMT* login_procedure; 

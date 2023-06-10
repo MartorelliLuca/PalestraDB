@@ -51,6 +51,7 @@ static bool successLogin(Role myRole, char* username) {
     clearScreen() ;
     showMyTitle() ;
     bool flag = false;
+
     if (switchRole(myRole) == false) {
         return false;
     }
@@ -109,55 +110,6 @@ static void login(){
         }
     } while (true) ;    
 }
-
-static bool registration(){
-    clearScreen();
-    showMyTitle();
-    puts("\t\t\t\t|‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾|");
-	puts("\t\t\t\t|      REGISTRAZIONE CLIENTE      |");
-	puts("\t\t\t\t|_________________________________|\n");
-    Credentials creds;
-    int failed_attempts = 0;
-    do {
-        if(failed_attempts == 3){
-            return false;
-        }
-        memset(&creds, 0, sizeof(Credentials));
-        if(promptLogin(&creds)){
-            if(registerNewPlayer(creds)){
-                printSuccess("Giocatore registrato correttamente");
-                return true;
-            }
-        }
-        failed_attempts ++;
-    } while (true) ;
-    
-}
-
-static bool pt_registration(){
-    clearScreen();
-    showMyTitle();
-    puts("\t\t\t\t|‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾|");
-	puts("\t\t\t\t|  REGISTRAZIONE PERSONAL TRAINER  |");
-	puts("\t\t\t\t|__________________________________|\n");
-    Credentials creds;
-    int failed_attempts = 0;
-    do {
-        if(failed_attempts == 3){
-            return false;
-        }
-        memset(&creds, 0, sizeof(Credentials));
-        if(promptLogin(&creds)){
-            if(registerNewPlayer(creds)){
-                printSuccess("Giocatore registrato correttamente");
-                return true;
-            }
-        }
-        failed_attempts ++;
-    } while (true) ;
-    
-}
-
 
 
 void loginController() {

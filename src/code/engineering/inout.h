@@ -5,7 +5,7 @@
 #include <errno.h>
 #include <ctype.h>
 #include <stdbool.h>
-#include "../model/credentials.h"
+#include "../model/structs.h"
 #include "../view/viewUtils.h"
 
 void toUpperCase(char *str);
@@ -18,7 +18,7 @@ bool getInteger(char* domanda, int *integerPtr);
 
 bool getLoginCredentials(Credentials *creds);
 
-bool getRegCredentials(newUser *user);
+bool getRegCredentials(User *user);
 
 bool getAttackInfo(char *terr1, char *terr2, int *num_carri);
 

@@ -17,7 +17,7 @@ void printError (char *errorMessage){
 
 void printSuccess (char *successMessage){  
     puts("");
-    printf("\033[42m%s\033[0m",successMessage);
+     printf("\033[47m\033[30m%s\033[0m", successMessage);
     puts("");
     puts("");
 }

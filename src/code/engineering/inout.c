@@ -91,7 +91,7 @@ bool getLoginCredentials(Credentials *creds){
     return true ;
 }
 
-bool getRegCredentials(newUser *user){
+bool getRegCredentials(User *user){
     if (!getInput("Codice Fiscale: ", user->cf, USERNAME_MAX_SIZE)) {
         printError("Errore Lettura Codice Fiscale") ;
         return false ;

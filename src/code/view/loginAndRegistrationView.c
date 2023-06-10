@@ -1,6 +1,6 @@
 #include "loginAndRegistrationView.h"
 
-bool promptReg(newUser *user) {
+bool promptReg(User *user) {
     printBoldGreen("Inserire le credenziali per registrarsi\n");
 
     return getRegCredentials(user);

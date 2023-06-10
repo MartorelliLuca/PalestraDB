@@ -7,4 +7,6 @@
 #include "viewUtils.h"
 
 bool promptLogin(Credentials *creds) ;
+bool promptReg(User *loggedUser) ;
+
 int promptInitialMenu();

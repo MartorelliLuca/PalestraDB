@@ -9,7 +9,7 @@
 #include "../database/dbUtils.h"
 #include "../engineering/inout.h"
 #include "../view/viewUtils.h"
-#include "../model/credentials.h"
+#include "../model/structs.h"
 #include "clientiController.h"
 #include "segreteriaController.h"
 #include <stdbool.h>

@@ -23,4 +23,7 @@ typedef struct {
     char cognome[COGNOME_MAX_SIZE] ;
     char username[USERNAME_MAX_SIZE] ;
     char password[PASSWORD_MAX_SIZE] ;
-} newUser ;
+} User ;
+
+
+

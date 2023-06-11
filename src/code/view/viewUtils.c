@@ -40,9 +40,8 @@ void showMyTitle() {
     puts("                                   ⣿⠀⠀⠀⠀⠀⠀⣠⡾⠋⠉⠁⣸⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿");
     puts("                                   ⣿⠀⠀⠀⠀⣀⣴⠏⠀⠀⠀⣰⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿");
     puts("                                   ⣿⣤⣤⣴⣾⣯⣤⣤⣤⣤⣴⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿");
-    puts("                                      By Luca Martorelli [m:0281213]");
+    puts("                                   By Luca Martorelli [m:0281213]");
     puts("");
-    printf("\033[0m");
 }
 
 

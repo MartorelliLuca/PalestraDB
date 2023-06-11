@@ -18,17 +18,19 @@ bool registerNewCustomer(User user);
 
 bool createNewGameRoom(char *nomeStanza);
 
-bool showMatchHistory(char *username);
+bool showOldRoutines(User *user, int *num);
 
-bool visualizzaSchedaAttiva(); //valuta di mettere già qua dentro il codice fiscale
+bool visualizzaSchedaAttiva(User *loggedUser); //valuta di mettere già qua dentro il codice fiscale
 
 bool retrieveReport();
 
-bool enterInGameRoom(char *username, char *nomeStanza,int *idPartita);
+bool scegliSchedaArchiviata(User *loggedUser);
+
+bool startWorkout(workoutCustomer *workUser);
 
 bool skipTurn(char *username);
 
-bool showMatchStatus(char *username);
+bool performExercise(workoutCustomer *workUser, char *esercizio);
 
 bool leaveMatch(char *username);
 

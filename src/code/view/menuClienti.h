@@ -4,4 +4,8 @@
 
 int promptMenuClienti();
 
-int promptMenuStanza();
+int promptMenuSessione();
+
+bool promptMenuSchedeArchiviate();
+
+int promptMenuSessione();

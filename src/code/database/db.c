@@ -227,13 +227,13 @@ err1:
 	return false;
 }
 
-bool showMatchStatus(char *username){
+bool performExercise(workoutCustomer *workUser, char *esercizio){
 	MYSQL_STMT* prepared_stmt;
-	MYSQL_BIND param[1];
+	MYSQL_BIND param[4];
 
 	// Prepare stored procedure call
-	if (!setup_prepared_stmt(&prepared_stmt, "call vedi_stato_di_gioco(?)", conn)) {
-		finish_with_stmt_error(conn, prepared_stmt, "Unable to initialize prepared statement for procedure: vedi_stato_di_gioco", false);
+	if (!setup_prepared_stmt(&prepared_stmt, "call esegui_esercizio(?)", conn)) {
+		finish_with_stmt_error(conn, prepared_stmt, "Unable to initialize prepared statement for procedure: esegui_esercizio", false);
 		goto err1;
 	}
 
@@ -241,18 +241,31 @@ bool showMatchStatus(char *username){
 	memset(param, 0, sizeof(param));
 
 	param[0].buffer_type = MYSQL_TYPE_VAR_STRING; // IN
-	param[0].buffer = username;
-	param[0].buffer_length = strlen(username);
+	param[0].buffer = workUser->cf;
+	param[0].buffer_length = strlen(workUser->cf);
+
+	param[1].buffer_type = MYSQL_TYPE_VAR_STRING; // IN
+	param[1].buffer = workUser->dataInizioScheda;
+	param[1].buffer_length = strlen(workUser->dataInizioScheda);
+
+	param[2].buffer_type = MYSQL_TYPE_VAR_STRING; // IN
+	param[2].buffer = workUser->dataSessione;
+	param[2].buffer_length = strlen(workUser->dataSessione);
+
+	param[3].buffer_type = MYSQL_TYPE_VAR_STRING; // IN
+	param[3].buffer = esercizio;
+	param[3].buffer_length = strlen(esercizio);
+
 
 	// Binding
 	if (mysql_stmt_bind_param(prepared_stmt, param) != 0) {
-		finish_with_stmt_error(conn, prepared_stmt, "Could not bind parameters in procedure: vedi_stato_di_gioco", true);
+		finish_with_stmt_error(conn, prepared_stmt, "Could not bind parameters in procedure: esegui_esercizio", true);
 		goto err;
 	}
 
 	// Execution
 	if (mysql_stmt_execute(prepared_stmt) != 0) {
-		print_stmt_error(prepared_stmt, "Error in execution for procedure: vedi_stato_di_gioco");
+		print_stmt_error(prepared_stmt, "Error in execution for procedure: esegui_esercizio");
 		goto err;
 	}
 
@@ -347,98 +360,187 @@ err1:
 	return false;
 }
 
-bool showMatchHistory(char *username){
-	MYSQL_STMT* prepared_stmt;
-	MYSQL_BIND param[1];
+bool showOldRoutines(User *loggedUser, int *numSchede) {
+    MYSQL_STMT* prepared_stmt;
+    MYSQL_BIND param[2];
 
-	// Prepare stored procedure call
-	if (!setup_prepared_stmt(&prepared_stmt, "call vedi_storico_partite(?)", conn)) {
-		finish_with_stmt_error(conn, prepared_stmt, "Unable to initialize prepared statement for procedure: vedi_storico_partite", false);
-		goto err1;
-	}
+    // Prepare stored procedure call
+    if (!setup_prepared_stmt(&prepared_stmt, "call visualizza_schede_archiviate(?, ?)", conn)) {
+        finish_with_stmt_error(conn, prepared_stmt, "Unable to initialize prepared statement for procedure: visualizza_schede_archiviate", false);
+        goto err1;
+    }
 
-	// Prepare parameters
-	memset(param, 0, sizeof(param));
+    // Prepare parameters
+    memset(param, 0, sizeof(param));
 
-	param[0].buffer_type = MYSQL_TYPE_VAR_STRING; // IN
-	param[0].buffer = username;
-	param[0].buffer_length = strlen(username);
+    param[0].buffer_type = MYSQL_TYPE_VAR_STRING; // IN
+    param[0].buffer = loggedUser->cf;
+    param[0].buffer_length = strlen(loggedUser->cf);
 
-	// Binding
-	if (mysql_stmt_bind_param(prepared_stmt, param) != 0) {
-		finish_with_stmt_error(conn, prepared_stmt, "Could not bind parameters in procedure: vedi_storico_partite", true);
-		goto err;
-	}
+    param[1].buffer_type = MYSQL_TYPE_LONG; // OUT
+    param[1].buffer = numSchede;
+	param[1].buffer_length = sizeof(numSchede);
 
-	// Execution
-	if (mysql_stmt_execute(prepared_stmt) != 0) {
-		print_stmt_error(prepared_stmt, "Error in execution for procedure: vedi_storico_partite");
-		goto err;
-	}
 
-	// Dump of the result set
-	dump_result_set(conn, prepared_stmt, "\n\tSTORICO PARTITE\n");
+    // Binding
+    if (mysql_stmt_bind_param(prepared_stmt, param) != 0) {
+        finish_with_stmt_error(conn, prepared_stmt, "Could not bind parameters in procedure: visualizza_schede_archiviate", true);
+        goto err;
+    }
+
+    // Execution
+    if (mysql_stmt_execute(prepared_stmt) != 0) {
+        print_stmt_error(prepared_stmt, "Error in execution for procedure: visualizza_schede_archiviate");
+        goto err;
+    }
+
+    // Fetch and print the results
+	dump_result_set(conn, prepared_stmt, "");
 	mysql_stmt_next_result(prepared_stmt);
-	mysql_stmt_close(prepared_stmt);
-	return true;
-err:
-	mysql_stmt_close(prepared_stmt);
-err1:
-	return false;
-}
 
-bool enterInGameRoom(char *username, char *nomeStanza, int *idPartita){
-	MYSQL_STMT* prepared_stmt;
-	MYSQL_BIND param[3];
+    // Binding per l'output
+    memset(param, 0, sizeof(param));
+    param[0].buffer_type = MYSQL_TYPE_LONG; // OUT
+    param[0].buffer = numSchede;
+	param[0].buffer_length = sizeof(numSchede);
 
-	// Prepare stored procedure call
-	if (!setup_prepared_stmt(&prepared_stmt, "call aggiungi_partecipante(?, ?, ?)", conn)) {
-		finish_with_stmt_error(conn, prepared_stmt, "Unable to initialize prepared statement for procedure: aggiungi_partecipante", false);
-		goto err1;
-	}
 
-	// Prepare parameters
-	memset(param, 0, sizeof(param));
-
-	param[0].buffer_type = MYSQL_TYPE_VAR_STRING; // IN
-	param[0].buffer = username;
-	param[0].buffer_length = strlen(username);
-
-	param[1].buffer_type = MYSQL_TYPE_VAR_STRING; // IN
-	param[1].buffer = nomeStanza;
-	param[1].buffer_length = strlen(nomeStanza);
-
-	param[2].buffer_type = MYSQL_TYPE_LONG; // OUT
-	param[2].buffer = idPartita;
-	param[2].buffer_length = sizeof(idPartita);
-
-	// Binding
-	if (mysql_stmt_bind_param(prepared_stmt, param) != 0) {
-		finish_with_stmt_error(conn, prepared_stmt, "Could not bind parameters in procedure: aggiungi_partecipante", true);
-		goto err;
-	}
-
-	// Execution
-	if (mysql_stmt_execute(prepared_stmt) != 0) {
-		print_stmt_error(prepared_stmt, "Error in execution for procedure: aggiungi_partecipante");
-		goto err;
-	}
-
-	// Prepare output params
-	memset(param, 0, sizeof(param));
-	param[0].buffer_type = MYSQL_TYPE_LONG; // OUT
-	param[0].buffer = idPartita;
-	param[0].buffer_length = sizeof(idPartita);
-
-	// Binding res
+    // Binding res
 	if (mysql_stmt_bind_result(prepared_stmt,param)){
-		print_stmt_error(prepared_stmt, "Could not retrieve output in procedure: aggiungi_partecipante");
+		print_stmt_error(prepared_stmt, "Could not retrieve output in procedure: visualizza_schede_archiviate");
 		goto err;
 	}
 
 	// Retrieve output parameter
 	if (mysql_stmt_fetch(prepared_stmt)){
-		print_stmt_error(prepared_stmt, "Could not buffer result in procedure: aggiungi_partecipante");
+		print_stmt_error(prepared_stmt, "Could not buffer result in procedure: visualizza_schede_archiviate");
+		goto err;
+	}
+
+    mysql_stmt_close(prepared_stmt);
+    return true;
+
+err:
+    mysql_stmt_close(prepared_stmt);
+err1:
+    return false;
+}
+
+bool scegliSchedaArchiviata(User *loggedUser){
+	    MYSQL_STMT* prepared_stmt;
+    MYSQL_BIND param[2];
+
+    // Prepare stored procedure call
+    if (!setup_prepared_stmt(&prepared_stmt, "call scegli_scheda_archiviata(?, ?)", conn)) {
+        finish_with_stmt_error(conn, prepared_stmt, "Unable to initialize prepared statement for procedure: scegli_scheda_archiviata", false);
+        goto err1;
+    }
+
+    // Prepare parameters
+    memset(param, 0, sizeof(param));
+
+    param[0].buffer_type = MYSQL_TYPE_VAR_STRING; // IN
+    param[0].buffer = loggedUser->cf;
+    param[0].buffer_length = strlen(loggedUser->cf);
+
+    param[1].buffer_type = MYSQL_TYPE_VAR_STRING; // IN
+    param[1].buffer = loggedUser->dataInizioScheda;
+	param[1].buffer_length = sizeof(loggedUser->dataInizioScheda);
+
+
+    // Binding
+    if (mysql_stmt_bind_param(prepared_stmt, param) != 0) {
+        finish_with_stmt_error(conn, prepared_stmt, "Could not bind parameters in procedure: scegli_scheda_archiviata", true);
+        goto err;
+    }
+
+    // Execution
+    if (mysql_stmt_execute(prepared_stmt) != 0) {
+        print_stmt_error(prepared_stmt, "Error in execution for procedure: scegli_scheda_archiviata");
+        goto err;
+    }
+
+    // Fetch and print the results
+	dump_result_set(conn, prepared_stmt, "");
+	mysql_stmt_next_result(prepared_stmt);
+
+    mysql_stmt_close(prepared_stmt);
+    return true;
+
+err:
+    mysql_stmt_close(prepared_stmt);
+err1:
+    return false;
+
+
+}
+
+bool startWorkout(workoutCustomer *workUser){
+	MYSQL_STMT* prepared_stmt;
+	MYSQL_BIND param[4];
+
+	// Prepare stored procedure call
+	if (!setup_prepared_stmt(&prepared_stmt, "call inizia_sessione(?, ?, ?, ?)", conn)) {
+		finish_with_stmt_error(conn, prepared_stmt, "Unable to initialize prepared statement for procedure: inizia_sessione", false);
+		goto err1;
+	}
+
+	// Prepare parameters
+	memset(param, 0, sizeof(param));
+
+	param[0].buffer_type = MYSQL_TYPE_VAR_STRING; // IN
+	param[0].buffer = workUser->cf;
+	param[0].buffer_length = strlen(workUser->cf);
+
+	param[1].buffer_type = MYSQL_TYPE_VAR_STRING; // OUT
+	param[1].buffer = workUser->dataInizioScheda;
+	param[1].buffer_length = strlen(workUser->dataInizioScheda);
+
+	param[2].buffer_type = MYSQL_TYPE_VAR_STRING; // OUT
+	param[2].buffer = workUser->dataSessione;
+	param[2].buffer_length = strlen(workUser->dataSessione);
+
+	param[3].buffer_type = MYSQL_TYPE_VAR_STRING; // OUT
+	param[3].buffer = workUser->orarioInizio;
+	param[3].buffer_length = strlen(workUser->orarioInizio);
+
+
+	// Binding
+	if (mysql_stmt_bind_param(prepared_stmt, param) != 0) {
+		finish_with_stmt_error(conn, prepared_stmt, "Could not bind parameters in procedure: inizia_sessione", true);
+		goto err;
+	}
+
+	// Execution
+	if (mysql_stmt_execute(prepared_stmt) != 0) {
+		print_stmt_error(prepared_stmt, "Error in execution for procedure: inizia_sessione");
+		goto err;
+	}
+
+	// Prepare output params
+	memset(param, 0, sizeof(param));
+	param[0].buffer_type = MYSQL_TYPE_VAR_STRING; // OUT
+	param[0].buffer = workUser->dataInizioScheda;
+	param[0].buffer_length = DATE_SIZE - 1;
+
+	param[1].buffer_type = MYSQL_TYPE_VAR_STRING; // OUT
+	param[1].buffer = workUser->dataSessione;
+	param[1].buffer_length = DATE_SIZE - 1;
+
+	param[2].buffer_type = MYSQL_TYPE_VAR_STRING; // OUT
+	param[2].buffer = workUser->orarioInizio;
+	param[2].buffer_length = TIME_SIZE - 1;
+
+
+	// Binding res
+	if (mysql_stmt_bind_result(prepared_stmt,param)){
+		print_stmt_error(prepared_stmt, "Could not retrieve output in procedure: inizia_sessione");
+		goto err;
+	}
+
+	// Retrieve output parameter
+	if (mysql_stmt_fetch(prepared_stmt)){
+		print_stmt_error(prepared_stmt, "Could not buffer result in procedure: inizia_sessione");
 		goto err;
 	}
 	mysql_stmt_close(prepared_stmt);

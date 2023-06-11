@@ -1,35 +1,34 @@
 #include "clientiController.h"
 
-#define EXERCISE_MAX_SIZE 20 + 1
+#define EXERCISE_MAX_SIZE 31
 
-char *g_username;
-char *g_codFiscale;
 
 
 //[3] MOSTRA SCHEDE ARCHIVIATE
 static bool mostraSchedaArchiviata(User *loggedUser){
-    int num_schede;
+    int num_schede, len;
+    Date *date = malloc(sizeof(Date));
+    if (date == NULL) {
+        printf("Errore: impossibile allocare memoria per la struttura date.\n");
+        exit(EXIT_FAILURE);
+    }
     printSuccess("-- ECCO LE TUE SCHEDE ARCHIVIATE --");
     if(showOldRoutines(loggedUser, &num_schede)){
         printf("\n\nHai %d schede archiviate\n\n", num_schede);
-        printBoldGreen("\n\nVuoi sceglierne una?\n\n");
-        if(!promptMenuSchedeArchiviate(loggedUser)){
-            printError("FATTO TROPPI ERRORI, STAI PIU' ATTENTO.\n");
+        if(!getDateFromUser(date)){
             return false;
         }
-        printf("%s", loggedUser->dataInizioScheda);
-        scegliSchedaArchiviata(loggedUser);
+        scegliSchedaArchiviata(loggedUser, date);
         return true;
     }else{
         return false;
     }
 }
 
-
 //[2] MOSTRA SCHEDA ATTIVA
 static bool mostraSchedaAttiva(User *loggedUser){
     printSuccess("-- ECCO LA TUA SCHEDA ATTIVA --");
-    if (visualizzaSchedaAttiva(loggedUser))
+    if (displayNewRoutine(loggedUser))
     {
         return true;
     }
@@ -40,61 +39,76 @@ static bool mostraSchedaAttiva(User *loggedUser){
 }
 
 
+static bool staiEseguendo(workoutCustomer *workUser, char *esercizio, int serieEsercizio){
+    bool prev_error = false;
+    int input, failed_attempts, serie=serieEsercizio;
+clean_up:
+    clearScreen();
+    showMyTitle();
+    while(true)
+    {
+        printBoldGreen("SEI ARRIVATO ALLA SERIE N°");
+        printf("\033[1;32m%d\033[0m", serie);
+        printf("\033[1;32m per l'esercizio: %s\033[0m\n", esercizio);
+    
+        if(prev_error){
+            printError("\t Ripristino menu dopo troppi tentativi errati\n\t Stai più attento!");
+            prev_error = false;
+        }
+        if(failed_attempts == 5){
+            prev_error = true;
+            goto clean_up;
+        }
+        input = promptMenuEsercizi();
+        switch (input)
+        {
+        case 1:
+            if(!addSetToExercise(workUser, esercizio, &serie)){
+                return true;
+            }
+            printf("%d", serie);
+            serie++;
+            printSuccess("SERIE AGGIUNTA CON SUCCESSO\n");
+            break;
+        case 2:                                                     //Termina prima esercizio
+            return true;
+        case 3:
+            if(!displayMissingSets(workUser, esercizio)){
+                failed_attempts ++;
+            }
+            break;
+        case 4:
+            goto clean_up;
+        default:
+            printError("Scegli tra le opzioni proposte!");
+            failed_attempts ++;
+            break;
+        }
+    }  
+}
+
 //[1] ESEGUI ESERCIZIO
 static bool eseguiEsercizio(workoutCustomer *workUser){
+    clearScreen();
+    showMyTitle();
     char esercizio[EXERCISE_MAX_SIZE];
-    printprintBoldGreen("QUALE ESERCIZIO VUOI ESEGUIRE?\n");
-    fgets(esercizio, EXERCISE_MAX_SIZE + 1, stdin);
+    int serieEsercizio, len;
+    printBoldGreen("QUALE ESERCIZIO VUOI ESEGUIRE?\n");
+    fgets(esercizio, EXERCISE_MAX_SIZE, stdin);
+    len = strlen(esercizio);
+    if (len > 0 && esercizio[len - 1] == '\n') {
+        esercizio[len - 1] = '\0';
+    }
+    if(len>EXERCISE_MAX_SIZE){
+        while(getchar() != '\n') ;
+    }
     if(performExercise(workUser, esercizio)){
-        printSuccess("-- GENERAZIONE STATO DI GIOCO TERMINATA --");
+        serieEsercizio = 1;
+        staiEseguendo(workUser, esercizio, serieEsercizio);
         return true;
     }else{
         return false;
     }
-}
-
-//[3] ATTACCA TERRITORIO
-static bool attaccaTerritorio(){
-    char nomeTerritorio1[VARCHAR45];
-    char nomeTerritorio2[VARCHAR45];
-    int num_army;
-    int num_army_loss_attack;
-    int num_army_loss_defense;
-    int is_conquered;
-    int i_won;
-    do{
-        memset(&nomeTerritorio1, 0, sizeof(nomeTerritorio1));
-        memset(&nomeTerritorio2, 0, sizeof(nomeTerritorio2));
-        memset(&num_army, 0, sizeof(num_army));
-        if(getAttackInfo(nomeTerritorio1, nomeTerritorio2, &num_army)){
-            //conversione nome territori in uppercase
-            toUpperCase(nomeTerritorio1);
-            toUpperCase(nomeTerritorio2);
-            if(attackTerritory(g_username, &num_army, nomeTerritorio1, nomeTerritorio2, &num_army_loss_attack, &num_army_loss_defense, &is_conquered, &i_won)){
-                printAttackResults(nomeTerritorio1,nomeTerritorio2,num_army_loss_attack,num_army_loss_defense);
-                puts("");
-                puts("");
-                if(is_conquered == 1){
-                    printConqueredTerritory();
-                    puts("");
-                    puts("");
-                    if(i_won == 1){
-                    }
-                }
-                return true;
-            }
-        }
-        return false;
-    }while(true);
-}
-
-static bool terminaSessione(workUser){
-    return true;
-}
-
-//[8] ABBANDONA PARTITA (ESCI DALLA STANZA)
-static bool abbandonaPartita(){
-    return leaveMatch(g_username);
 }
 
 static bool sessioneIniziata(workoutCustomer* workUser, User* loggedUser){
@@ -106,7 +120,6 @@ clean_up:
     printf("\t\t\t\t|  STAI SVOLGENDO LA TUA SESSIONE  |   DATA SCHEDA:   %s\n", workUser->dataInizioScheda);
 	printf("\t\t\t\t|__________________________________|   DATA SESSIONE: %s\n", workUser->dataSessione);
     int input, failed_attempts = 0;
-    char * buff;
     while(true)
     {
         if(prev_error){
@@ -126,17 +139,17 @@ clean_up:
             }
             break;
         case 2:
-            if(!visualizzaSchedaAttiva(loggedUser)){
+            if(!displayNewRoutine(loggedUser)){
                 failed_attempts ++;
             }
             break;
         case 3:
-            if(!attaccaTerritorio()){
+            if(!displayMissingExercises(workUser)){                         //visualizza Esercizi Mancanti
                 failed_attempts ++;
             }
             break;
         case 4:
-            if(!terminaSessione(workUser)){                                      //GUARDA LEAVE MATCH
+            if(!endWorkout(workUser)){                                      //GUARDA LEAVE MATCH
                 printf("SESSIONE NON TERMINATA.\n");
                 break;
             }
@@ -156,7 +169,6 @@ clean_up:
 
 //[1] INIZIA UNA SESSIONE DI ALLENAMENTO
 static bool iniziaSessione(User *loggedUser) {
-    int input;
     workoutCustomer* workUser = malloc(sizeof(workoutCustomer));
     if (workUser == NULL) {
         printf("Errore: impossibile allocare memoria per la struttura workUser.\n");

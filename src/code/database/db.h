@@ -12,7 +12,7 @@
 
 Role logAsUser(Credentials creds);
 
-bool registerNewPlayer(Credentials creds);
+bool displayMissingExercises(workoutCustomer *workUser);
 
 bool registerNewCustomer(User user);
 
@@ -20,11 +20,11 @@ bool createNewGameRoom(char *nomeStanza);
 
 bool showOldRoutines(User *user, int *num);
 
-bool visualizzaSchedaAttiva(User *loggedUser); //valuta di mettere già qua dentro il codice fiscale
+bool displayNewRoutine(User *loggedUser); //valuta di mettere già qua dentro il codice fiscale
 
 bool retrieveReport();
 
-bool scegliSchedaArchiviata(User *loggedUser);
+bool scegliSchedaArchiviata(User *loggedUser, Date *date);
 
 bool startWorkout(workoutCustomer *workUser);
 
@@ -32,14 +32,14 @@ bool skipTurn(char *username);
 
 bool performExercise(workoutCustomer *workUser, char *esercizio);
 
-bool leaveMatch(char *username);
+bool endWorkout(workoutCustomer *workUser);
 
 bool attackTerritory(char *username, int *num_carri, char *terr1, char *terr2, int *num_army_loss_attack, int *num_army_loss_defense,int *is_conquered, int *i_won);
 
-bool placeArmyOnTerritory(char *username, int *num_carri, char *terr);
+bool addSetToExercise(workoutCustomer *workUser, char *esercizio, int *numeroSerie);
 
 bool moveArmyBetweenTerritories(char *username, int *num_carri, char *terr1, char *terr2);
 
-bool showAdjacentTerritories(char *terr);
+bool displayMissingSets(workoutCustomer *workUser, char *esercizio);
 
 bool getCustomerCf(User *loggedUser);

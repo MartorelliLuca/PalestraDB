@@ -1,5 +1,6 @@
 #include "db.h"
 
+
 bool moveArmyBetweenTerritories(char *username, int *num_carri, char *terr1, char *terr2){
 	MYSQL_STMT* prepared_stmt;
 	MYSQL_BIND param[4];
@@ -50,50 +51,6 @@ err1:
 }
 
 
-bool placeArmyOnTerritory(char *username, int *num_carri, char *terr){
-	MYSQL_STMT* prepared_stmt;
-	MYSQL_BIND param[3];
-
-	// Prepare stored procedure call
-	if (!setup_prepared_stmt(&prepared_stmt, "call posiziona_carriArmati_su_territorio(?, ?, ?)", conn)) {
-		finish_with_stmt_error(conn, prepared_stmt, "Unable to initialize prepared statement for procedure: posiziona_carriArmati_su_territorio", false);
-		goto err1;
-	}
-
-	// Prepare parameters
-	memset(param, 0, sizeof(param));
-
-	param[0].buffer_type = MYSQL_TYPE_VAR_STRING; // IN
-	param[0].buffer = username;
-	param[0].buffer_length = strlen(username);
-
-	param[1].buffer_type = MYSQL_TYPE_LONG; // IN
-	param[1].buffer = num_carri;
-	param[1].buffer_length = sizeof(num_carri);
-
-	param[2].buffer_type = MYSQL_TYPE_VAR_STRING; // IN
-	param[2].buffer = terr;
-	param[2].buffer_length = strlen(terr);
-	
-	// Binding
-	if (mysql_stmt_bind_param(prepared_stmt, param) != 0) {
-		finish_with_stmt_error(conn, prepared_stmt, "Could not bind parameters in procedure: posiziona_carriArmati_su_territorio", true);
-		goto err;
-	}
-
-	// Execution
-	if (mysql_stmt_execute(prepared_stmt) != 0) {
-		print_stmt_error(prepared_stmt, "Error in execution for procedure: posiziona_carriArmati_su_territorio");
-		goto err;
-	}
-
-	mysql_stmt_close(prepared_stmt);
-	return true;
-err:
-	mysql_stmt_close(prepared_stmt);
-err1:
-	return false;
-}
 
 bool attackTerritory(char *username, int *num_carri, char *terr1, char *terr2, int *num_army_loss_attack, int *num_army_loss_defense,int *is_conquered, int *i_won){
 	MYSQL_STMT* prepared_stmt;
@@ -190,13 +147,13 @@ err1:
 	return false;
 }
 
-bool skipTurn(char *username){
+bool addSetToExercise(workoutCustomer *workUser, char *esercizio, int *numeroSerie){
 	MYSQL_STMT* prepared_stmt;
-	MYSQL_BIND param[1];
+	MYSQL_BIND param[5];
 
 	// Prepare stored procedure call
-	if (!setup_prepared_stmt(&prepared_stmt, "call salta_turno(?)", conn)) {
-		finish_with_stmt_error(conn, prepared_stmt, "Unable to initialize prepared statement for procedure: salta_turno", false);
+	if (!setup_prepared_stmt(&prepared_stmt, "call aggiungi_serie_esercizio(?, ?, ?, ?, ?)", conn)) {
+		finish_with_stmt_error(conn, prepared_stmt, "Unable to initialize prepared statement for procedure: aggiungi_serie_esercizio", false);
 		goto err1;
 	}
 
@@ -204,18 +161,35 @@ bool skipTurn(char *username){
 	memset(param, 0, sizeof(param));
 
 	param[0].buffer_type = MYSQL_TYPE_VAR_STRING; // IN
-	param[0].buffer = username;
-	param[0].buffer_length = strlen(username);
+	param[0].buffer = esercizio;
+	param[0].buffer_length = strlen(esercizio);
+
+	param[1].buffer_type = MYSQL_TYPE_VAR_STRING; // IN
+	param[1].buffer = workUser->dataSessione;
+	param[1].buffer_length = strlen(workUser->dataSessione);
+
+	param[2].buffer_type = MYSQL_TYPE_VAR_STRING; // IN
+	param[2].buffer = workUser->dataInizioScheda;
+	param[2].buffer_length = strlen(workUser->dataInizioScheda);
+	
+	param[3].buffer_type = MYSQL_TYPE_VAR_STRING; // IN
+	param[3].buffer = workUser->cf;
+	param[3].buffer_length = strlen(workUser->cf);
+
+	param[4].buffer_type = MYSQL_TYPE_LONG; // IN
+	param[4].buffer = numeroSerie;
+	param[4].buffer_length = sizeof(int);
+
 
 	// Binding
 	if (mysql_stmt_bind_param(prepared_stmt, param) != 0) {
-		finish_with_stmt_error(conn, prepared_stmt, "Could not bind parameters in procedure: salta_turno", true);
+		finish_with_stmt_error(conn, prepared_stmt, "Could not bind parameters in procedure: aggiungi_serie_esercizio", true);
 		goto err;
 	}
 
 	// Execution
 	if (mysql_stmt_execute(prepared_stmt) != 0) {
-		print_stmt_error(prepared_stmt, "Error in execution for procedure: salta_turno");
+		print_stmt_error(prepared_stmt, "Error in execution for procedure: aggiungi_serie_esercizio");
 		goto err;
 	}
 
@@ -232,7 +206,7 @@ bool performExercise(workoutCustomer *workUser, char *esercizio){
 	MYSQL_BIND param[4];
 
 	// Prepare stored procedure call
-	if (!setup_prepared_stmt(&prepared_stmt, "call esegui_esercizio(?)", conn)) {
+	if (!setup_prepared_stmt(&prepared_stmt, "call esegui_esercizio(?, ?, ?, ?)", conn)) {
 		finish_with_stmt_error(conn, prepared_stmt, "Unable to initialize prepared statement for procedure: esegui_esercizio", false);
 		goto err1;
 	}
@@ -241,21 +215,20 @@ bool performExercise(workoutCustomer *workUser, char *esercizio){
 	memset(param, 0, sizeof(param));
 
 	param[0].buffer_type = MYSQL_TYPE_VAR_STRING; // IN
-	param[0].buffer = workUser->cf;
-	param[0].buffer_length = strlen(workUser->cf);
+	param[0].buffer = esercizio;
+	param[0].buffer_length = strlen(esercizio);
 
 	param[1].buffer_type = MYSQL_TYPE_VAR_STRING; // IN
-	param[1].buffer = workUser->dataInizioScheda;
-	param[1].buffer_length = strlen(workUser->dataInizioScheda);
+	param[1].buffer = workUser->dataSessione;
+	param[1].buffer_length = strlen(workUser->dataSessione);
 
 	param[2].buffer_type = MYSQL_TYPE_VAR_STRING; // IN
-	param[2].buffer = workUser->dataSessione;
-	param[2].buffer_length = strlen(workUser->dataSessione);
+	param[2].buffer = workUser->dataInizioScheda;
+	param[2].buffer_length = strlen(workUser->dataInizioScheda);
 
 	param[3].buffer_type = MYSQL_TYPE_VAR_STRING; // IN
-	param[3].buffer = esercizio;
-	param[3].buffer_length = strlen(esercizio);
-
+	param[3].buffer = workUser->cf;
+	param[3].buffer_length = strlen(workUser->cf);
 
 	// Binding
 	if (mysql_stmt_bind_param(prepared_stmt, param) != 0) {
@@ -269,10 +242,6 @@ bool performExercise(workoutCustomer *workUser, char *esercizio){
 		goto err;
 	}
 
-	// Dump of the result set
-	dump_result_set(conn, prepared_stmt, "\n\tSTATO DI GIOCO\n");
-	mysql_stmt_next_result(prepared_stmt);
-	dump_result_set(conn, prepared_stmt, "\n\tARMATE GIOCATORI\n");
 	mysql_stmt_next_result(prepared_stmt);
 	mysql_stmt_close(prepared_stmt);
 	return true;
@@ -282,7 +251,7 @@ err1:
 	return false;
 }
 
-bool visualizzaSchedaAttiva(User *loggedUser){
+bool displayNewRoutine(User *loggedUser){
     MYSQL_STMT* prepared_stmt;
     MYSQL_BIND param[1];
 
@@ -323,13 +292,13 @@ err1:
     return false;
 }
 
-bool leaveMatch(char *username){
+bool endWorkout(workoutCustomer *workUser){
 	MYSQL_STMT* prepared_stmt;
-	MYSQL_BIND param[1];
+	MYSQL_BIND param[4];
 
 	// Prepare stored procedure call
-	if (!setup_prepared_stmt(&prepared_stmt, "call rimuovi_partecipante(?)", conn)) {
-		finish_with_stmt_error(conn, prepared_stmt, "Unable to initialize prepared statement for procedure: rimuovi_partecipante", false);
+	if (!setup_prepared_stmt(&prepared_stmt, "call termina_sessione(?, ?, ?, ?)", conn)) {
+		finish_with_stmt_error(conn, prepared_stmt, "Unable to initialize prepared statement for procedure: termina_sessione", false);
 		goto err1;
 	}
 
@@ -337,18 +306,30 @@ bool leaveMatch(char *username){
 	memset(param, 0, sizeof(param));
 
 	param[0].buffer_type = MYSQL_TYPE_VAR_STRING; // IN
-	param[0].buffer = username;
-	param[0].buffer_length = strlen(username);
+	param[0].buffer = workUser->dataSessione;
+	param[0].buffer_length = strlen(workUser->dataSessione);
+
+	param[1].buffer_type = MYSQL_TYPE_VAR_STRING; // IN
+	param[1].buffer = workUser->orarioInizio;
+	param[1].buffer_length = strlen(workUser->orarioInizio);
+
+	param[2].buffer_type = MYSQL_TYPE_VAR_STRING; // IN
+	param[2].buffer = workUser->dataInizioScheda;
+	param[2].buffer_length = strlen(workUser->dataInizioScheda);
+
+	param[3].buffer_type = MYSQL_TYPE_VAR_STRING; // IN
+	param[3].buffer = workUser->cf;
+	param[3].buffer_length = strlen(workUser->cf);
 
 	// Binding
 	if (mysql_stmt_bind_param(prepared_stmt, param) != 0) {
-		finish_with_stmt_error(conn, prepared_stmt, "Could not bind parameters in procedure: rimuovi_partecipante", true);
+		finish_with_stmt_error(conn, prepared_stmt, "Could not bind parameters in procedure: termina_sessione", true);
 		goto err;
 	}
 
 	// Execution
 	if (mysql_stmt_execute(prepared_stmt) != 0) {
-		print_stmt_error(prepared_stmt, "Error in execution for procedure: rimuovi_partecipante");
+		print_stmt_error(prepared_stmt, "Error in execution for procedure: termina_sessione");
 		goto err;
 	}
 
@@ -426,8 +407,8 @@ err1:
     return false;
 }
 
-bool scegliSchedaArchiviata(User *loggedUser){
-	    MYSQL_STMT* prepared_stmt;
+bool scegliSchedaArchiviata(User *loggedUser, Date *data){
+	MYSQL_STMT* prepared_stmt;
     MYSQL_BIND param[2];
 
     // Prepare stored procedure call
@@ -443,9 +424,12 @@ bool scegliSchedaArchiviata(User *loggedUser){
     param[0].buffer = loggedUser->cf;
     param[0].buffer_length = strlen(loggedUser->cf);
 
-    param[1].buffer_type = MYSQL_TYPE_VAR_STRING; // IN
-    param[1].buffer = loggedUser->dataInizioScheda;
-	param[1].buffer_length = sizeof(loggedUser->dataInizioScheda);
+    MYSQL_TIME mysqlDate ;
+    prepareDateParam(data, &mysqlDate) ;
+
+	param[1].buffer_type = MYSQL_TYPE_DATE;
+	param[1].buffer = &mysqlDate;
+	param[1].buffer_length = sizeof(MYSQL_TIME);
 
 
     // Binding
@@ -671,13 +655,13 @@ err1:
 	return false;
 }
 
-bool registerNewPlayer(Credentials creds){
+bool displayMissingExercises(workoutCustomer *workUser){
 	MYSQL_STMT* prepared_stmt;
 	MYSQL_BIND param[4];
 
 	// Prepare stored procedure call
-	if (!setup_prepared_stmt(&prepared_stmt, "call registra_nuovo_giocatore(?, ?)", conn)) {
-		finish_with_stmt_error(conn, prepared_stmt, "Unable to initialize prepared statement for procedure: registra_nuovo_giocatore", false);
+	if (!setup_prepared_stmt(&prepared_stmt, "call visualizza_esercizi_mancanti(?, ?, ?)", conn)) {
+		finish_with_stmt_error(conn, prepared_stmt, "Unable to initialize prepared statement for procedure: visualizza_esercizi_mancanti", false);
 		goto err1;
 	}
 
@@ -685,25 +669,31 @@ bool registerNewPlayer(Credentials creds){
 	memset(param, 0, sizeof(param));
 
 	param[0].buffer_type = MYSQL_TYPE_VAR_STRING; // IN
-	param[0].buffer = creds.username;
-	param[0].buffer_length = strlen(creds.username);
+	param[0].buffer = workUser->cf;
+	param[0].buffer_length = strlen(workUser->cf);
 
 	param[1].buffer_type = MYSQL_TYPE_VAR_STRING; // IN
-	param[1].buffer = creds.password;
-	param[1].buffer_length = strlen(creds.password);
+	param[1].buffer = workUser->dataSessione;
+	param[1].buffer_length = strlen(workUser->dataSessione);
+
+	param[2].buffer_type = MYSQL_TYPE_VAR_STRING; // IN
+	param[2].buffer = workUser->dataInizioScheda;
+	param[2].buffer_length = strlen(workUser->dataInizioScheda);
+
 
 	// Binding
 	if (mysql_stmt_bind_param(prepared_stmt, param) != 0) {
-		finish_with_stmt_error(conn, prepared_stmt, "Could not bind parameters in procedure: registra_nuovo_giocatore", true);
+		finish_with_stmt_error(conn, prepared_stmt, "Could not bind parameters in procedure: visualizza_esercizi_mancanti", true);
 		goto err;
 	}
 
 	// Execution
 	if (mysql_stmt_execute(prepared_stmt) != 0) {
-		print_stmt_error(prepared_stmt, "Error in execution for procedure: registra_nuovo_giocatore");
+		print_stmt_error(prepared_stmt, "Error in execution for procedure: visualizza_esercizi_mancanti");
 		goto err;
 	}
 
+	dump_result_set(conn, prepared_stmt, "\n");
 	mysql_stmt_close(prepared_stmt);
 	return true;
 err:
@@ -712,13 +702,13 @@ err1:
 	return false;
 }
 
-bool showAdjacentTerritories(char *terr){
+bool displayMissingSets(workoutCustomer *workUser, char* esercizio){
     MYSQL_STMT* prepared_stmt;
-	MYSQL_BIND param[1];
+	MYSQL_BIND param[4];
 
 	// Prepare stored procedure call
-	if (!setup_prepared_stmt(&prepared_stmt, "call mostra_adiacenze_territorio(?)", conn)) {
-		finish_with_stmt_error(conn, prepared_stmt, "Unable to initialize prepared statement for procedure: mostra_adiacenze_territorio", false);
+	if (!setup_prepared_stmt(&prepared_stmt, "call visualizza_serie_mancanti(?, ?, ?, ?)", conn)) {
+		finish_with_stmt_error(conn, prepared_stmt, "Unable to initialize prepared statement for procedure: visualizza_serie_mancanti", false);
 		goto err1;
 	}
 
@@ -726,23 +716,35 @@ bool showAdjacentTerritories(char *terr){
 	memset(param, 0, sizeof(param));
 
 	param[0].buffer_type = MYSQL_TYPE_VAR_STRING; // IN
-	param[0].buffer = terr;
-	param[0].buffer_length = strlen(terr);
+	param[0].buffer = workUser->cf;
+	param[0].buffer_length = strlen(workUser->cf);
+
+	param[1].buffer_type = MYSQL_TYPE_VAR_STRING; // IN
+	param[1].buffer = esercizio;
+	param[1].buffer_length = strlen(esercizio);
+
+	param[2].buffer_type = MYSQL_TYPE_VAR_STRING; // IN
+	param[2].buffer = workUser->dataSessione;
+	param[2].buffer_length = strlen(workUser->dataSessione);
+
+	param[3].buffer_type = MYSQL_TYPE_VAR_STRING; // IN
+	param[3].buffer = workUser->dataInizioScheda;
+	param[3].buffer_length = strlen(workUser->dataInizioScheda);
 
 	// Binding
 	if (mysql_stmt_bind_param(prepared_stmt, param) != 0) {
-		finish_with_stmt_error(conn, prepared_stmt, "Could not bind parameters in procedure: mostra_adiacenze_territorio", true);
+		finish_with_stmt_error(conn, prepared_stmt, "Could not bind parameters in procedure: visualizza_serie_mancantiv", true);
 		goto err;
 	}
 
 	// Execution
 	if (mysql_stmt_execute(prepared_stmt) != 0) {
-		print_stmt_error(prepared_stmt, "Error in execution for procedure: mostra_adiacenze_territorio");
+		print_stmt_error(prepared_stmt, "Error in execution for procedure: visualizza_serie_mancanti");
 		goto err;
 	}
 
 	// Dump of the result set
-	dump_result_set(conn, prepared_stmt, "\n\tTERRITORI ADIACENTI\n");
+	dump_result_set(conn, prepared_stmt, "\n");
 	mysql_stmt_next_result(prepared_stmt);
 	mysql_stmt_close(prepared_stmt);
 	return true;

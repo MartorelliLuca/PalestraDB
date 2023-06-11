@@ -26,7 +26,7 @@ int promptMenuSessione(){
     printBoldGreen("[1] ");
     printf("ESEGUI ESERCIZIO\n");
     printBoldGreen("[2] ");
-    printf("VISCUALIZZA SCHEDA DA FARE\n");
+    printf("VISUALIZZA SCHEDA DA FARE\n");
     printBoldGreen("[3] ");
     printf("VISUALIZZA ESERCIZI RESTANTI\n");
     printBoldGreen("[4] ");
@@ -40,7 +40,52 @@ int promptMenuSessione(){
     return input;
 }
 
-bool isDateValid(const char* dateStr) {
+
+bool getUserInput(char *resultBuffer, int bufferSize) {
+
+    printBoldGreen("Inserire Data Assenza [yyyy-mm-dd] >>> ") ;
+
+    //Alloco un buffer di dimensione pari alla massima dimensione valida per l'input più uno per lo \n
+    char inputBuffer[bufferSize + 1] ;
+
+    //Lettura al massimo di inputMaxSize - 1 caratteri incluso, se lo trova, il \n
+    if (fgets(inputBuffer, bufferSize + 1, stdin) == NULL) {
+        printError("Errore Scansione Input") ;
+        return false ;
+    }
+
+    //Rimozione eventuale \n letto da fgets
+    for (int i = 0 ; i < (int) strlen(inputBuffer) ; i++){
+        if (inputBuffer[i] == '\n') inputBuffer[i] = '\0' ;
+    }
+    /*
+        Se ho una lunghezza di ciò che ho letto pari al massimo leggibile, 
+        significa che sul canale di input è rimasto ALMENO lo \n,
+        quindi devo rimuovere il resto dell'input per non leggerlo alla lettura successiva.
+        Significa inoltre che ho letto almeno un carattere in più della dimensione massima prevista e quindi l'input
+        non è valido
+    */
+
+    if ((int) strlen(inputBuffer) == bufferSize) {
+        while(getchar() != '\n') ;
+        printError("Input Inserito Troppo Lungo") ;
+        return false ;
+    }
+
+    strcpy(resultBuffer, inputBuffer) ;
+
+    /*
+        Aggiunta controllo input non vuoto.
+        Vantaggi:
+            - evito di ricontrollare ogni volta che la funzione viene chiamata
+            - Se viene chiesto un input all'utente ci si aspetta che esso venga inserito. 
+            - Se non lo fa c'è un errore e posso ritornare false 
+    */
+    if (strlen(resultBuffer) == 0) return false ;
+    return true ;
+}
+
+bool isDateValid(char* dateStr) {
     
     // Verifica il formato
     if (dateStr[4] != '-' || dateStr[7] != '-') {
@@ -72,32 +117,56 @@ bool isDateValid(const char* dateStr) {
     return true;
 }
 
-
-bool promptMenuSchedeArchiviate(User *loggedUser) {
-    char date[11];
-    int fails = 0;
-    while (1) {
-init:
-        if (fails == 3) {
-            return false;
-        }        
-        printBoldGreen("Quale vuoi vedere?\n");
-        printBoldGreen("Per favore inserisci il formato data in questo modo: yyyy-mm-dd\n");
-        printBoldGreen(">> ");
-        fgets(date, sizeof(date), stdin);
-
-        if (isDateValid(date)) {
-            strcpy(loggedUser->dataInizioScheda, date);
-            break;
-        }
-        printError("LA DATA INSERITA NON HA SENSO");
-        fails++;
-        if(strlen(date)<11){
-            goto init;
-        }
-        while ((getchar()) != '\n') {}
+bool verifyAndParseDate(Date *datePtr, char *dateString) {
+    //Verifica su Correttezza rapporto tra mese-giorno e anno è fatta dal DBMS
+    if(!isDateValid(dateString)){
+        return false;
     }
-    return true;
+
+    char *yearString = strtok(dateString, "-") ;
+    char *monthString = strtok(NULL, "-") ;
+    char *dayString = strtok(NULL, "-") ;
+    if (strlen(yearString) == 4 && strlen(monthString) == 2 && strlen(dayString) == 2) {
+        datePtr->year = atoi(yearString) ;
+        datePtr->month = atoi(monthString) ;
+        datePtr->day = atoi(dayString) ;
+        return true ;
+    }
+    return false ;
 }
 
-int promptMenuSessione();
+
+bool getDateFromUser(Date *datePtr) {
+    char dateString[strlen("yyyy-mm-dd") + 1] ;
+    if (!(getUserInput(dateString, strlen("yyyy-mm-dd") + 1))) {
+        printError("Errore Inserimento Data") ;
+        return false ;
+    }
+    printf("Checkpoint5\n");
+    if (!verifyAndParseDate(datePtr, dateString)) {
+        printError("Formato della Data Inserita non Valido") ;
+        return false ;
+    }
+
+    return true ;
+}
+
+
+
+int promptMenuEsercizi(){
+    int input;
+    printBoldGreen("Cosa vuoi fare? \n");
+    printBoldGreen("[1] ");
+    printf("FAI UN'ALTRA SERIE\n");
+    printBoldGreen("[2] ");
+    printf("VAI AL PROSSIMO ESERCIZIO\n");
+    printBoldGreen("[3] ");
+    printf("VISUALIZZA SERIE RESTANTI\n");
+    printBoldGreen("[4] ");
+    printf("CLEAN SCREEN\n");
+    printBoldGreen(">> ");
+    if(!getInteger("", &input)){
+            return -1;
+    }
+    return input;
+}

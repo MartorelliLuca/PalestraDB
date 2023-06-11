@@ -16,6 +16,16 @@ void print_stmt_error(MYSQL_STMT* stmt, char* message)
 	puts("");
 }
 
+//Fa la Conversione da Tipo Date a MYSQL_TIME
+void prepareDateParam(Date *datePtr , MYSQL_TIME *mysqlTime) {
+
+    memset(mysqlTime, 0, sizeof(MYSQL_TIME)) ;
+
+    mysqlTime->day = datePtr->day ;
+    mysqlTime->month = datePtr->month ;
+    mysqlTime->year = datePtr->year ;
+}
+
 
 void print_sql_error(MYSQL* conn, char* message)
 {

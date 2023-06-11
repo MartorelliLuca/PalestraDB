@@ -26,8 +26,7 @@ typedef struct {
     char cognome[COGNOME_MAX_SIZE] ;
     char username[USERNAME_MAX_SIZE] ;
     char password[PASSWORD_MAX_SIZE] ;
-    char dataInizioScheda[DATE_SIZE];    //usato per clienti per vedere una scheda archiviata precisa, per pt per selezionare una precisa scheda da voler archiviare
-} User; //USATO PER FARE IL LOGIN SIA PER CLIENTI CHE PT
+} User;
 
 typedef struct {
     char cf[USERNAME_MAX_SIZE] ;
@@ -36,6 +35,12 @@ typedef struct {
     char orarioFine[TIME_SIZE];
     char dataSessione[DATE_SIZE];
 } workoutCustomer;
+
+typedef struct {
+    int year ;
+    int month ;
+    int day ;
+} Date ;
     
 
 

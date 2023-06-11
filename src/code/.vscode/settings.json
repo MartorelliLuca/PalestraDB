@@ -1,5 +1,7 @@
 {
     "files.associations": {
-        "connector.h": "c"
+        "connector.h": "c",
+        "db.h": "c",
+        "dbutils.h": "c"
     }
 }

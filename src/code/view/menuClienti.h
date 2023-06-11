@@ -6,6 +6,8 @@ int promptMenuClienti();
 
 int promptMenuSessione();
 
-bool promptMenuSchedeArchiviate();
+bool getDateFromUser(Date *date);
 
 int promptMenuSessione();
+
+int promptMenuEsercizi();

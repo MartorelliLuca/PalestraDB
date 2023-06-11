@@ -14,3 +14,4 @@ extern void finish_with_error(MYSQL* conn, char* message);
 extern void finish_with_stmt_error(MYSQL* conn, MYSQL_STMT* stmt, char* message, bool close_stmt);
 extern bool setup_prepared_stmt(MYSQL_STMT** stmt, char* statement, MYSQL* conn);
 extern void dump_result_set(MYSQL* conn, MYSQL_STMT* stmt, char* title);
+extern void prepareDateParam(Date *datePtr , MYSQL_TIME *mysqlTime);

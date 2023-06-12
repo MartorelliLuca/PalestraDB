@@ -12,6 +12,7 @@
 #include "../model/structs.h"
 #include "clientiController.h"
 #include "segreteriaController.h"
+#include "ptController.h"
 #include <stdbool.h>
 
 

@@ -6,7 +6,7 @@
 
 //[3] MOSTRA SCHEDE ARCHIVIATE
 static bool mostraSchedaArchiviata(User *loggedUser){
-    int num_schede, len;
+    int num_schede;
     Date *date = malloc(sizeof(Date));
     if (date == NULL) {
         printf("Errore: impossibile allocare memoria per la struttura date.\n");
@@ -89,7 +89,8 @@ clean_up:
 
 //[1] ESEGUI ESERCIZIO
 static bool eseguiEsercizio(workoutCustomer *workUser){
-    clearScreen();
+    puts("");
+    puts("");
     showMyTitle();
     char esercizio[EXERCISE_MAX_SIZE];
     int serieEsercizio, len;
@@ -217,7 +218,9 @@ clean_up:
     puts("");
     puts("");
     puts("");
-    printf("\033[47m\033[30mCODICE FISCALE: %s\n\n\033[0m", loggedUser->cf);
+    printf("\033[47m\033[30mCODICE FISCALE: %s\033[0m", loggedUser->cf);
+    puts("");
+    puts("");
     while(true)
     {
         if(prev_error){

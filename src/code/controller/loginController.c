@@ -58,7 +58,7 @@ static bool successLogin(Role myRole, char* username) {
 
     switch (myRole) {
         case  PT:
-            //ptController(username) ;
+            ptController(username) ;
             flag = true ;
             break;
         case SEGRETERIA :

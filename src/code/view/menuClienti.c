@@ -118,7 +118,7 @@ bool isDateValid(char* dateStr) {
 }
 
 bool verifyAndParseDate(Date *datePtr, char *dateString) {
-    //Verifica su Correttezza rapporto tra mese-giorno e anno è fatta dal DBMS
+    
     if(!isDateValid(dateString)){
         return false;
     }
@@ -142,7 +142,7 @@ bool getDateFromUser(Date *datePtr) {
         printError("Errore Inserimento Data") ;
         return false ;
     }
-    printf("Checkpoint5\n");
+
     if (!verifyAndParseDate(datePtr, dateString)) {
         printError("Formato della Data Inserita non Valido") ;
         return false ;

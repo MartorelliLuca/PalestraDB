@@ -34,7 +34,7 @@ bool performExercise(workoutCustomer *workUser, char *esercizio);
 
 bool endWorkout(workoutCustomer *workUser);
 
-bool attackTerritory(char *username, int *num_carri, char *terr1, char *terr2, int *num_army_loss_attack, int *num_army_loss_defense,int *is_conquered, int *i_won);
+bool getPtCf(User *loggedUser);
 
 bool addSetToExercise(workoutCustomer *workUser, char *esercizio, int *numeroSerie);
 

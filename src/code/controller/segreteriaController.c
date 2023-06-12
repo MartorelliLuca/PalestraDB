@@ -1,15 +1,16 @@
 #include "segreteriaController.h"
 
 static bool registraNuovoCliente(){
-    User user;
     clearScreen();
-    showMyTitle();
-    puts("\t\t\t\t|‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾|");
-	puts("\t\t\t\t|      REGISTRAZIONE CLIENTE      |");
-	puts("\t\t\t\t|_________________________________|\n");
+    User user;
     int failed_attempts = 0;
     do {
+        showMyTitle();
+        puts("\t\t\t\t|‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾|");
+	    puts("\t\t\t\t|      REGISTRAZIONE CLIENTE      |");
+	    puts("\t\t\t\t|_________________________________|\n");
         if(failed_attempts == 3){
+            printError("HAI FATTO TROPPI ERRORI, FAI PIU' ATTENZIONE.");
             return false;
         }
         memset(&user, 0, sizeof(User));
@@ -20,19 +21,22 @@ static bool registraNuovoCliente(){
             }
         }
         failed_attempts ++;
+        printf("\033[41mErrore numero %d, su 3 consentiti\033[0m",failed_attempts);
+
     } while (true) ;
 }
 
 static bool registraNuovoPT(){
-    clearScreen();
-    showMyTitle();
-    puts("\t\t\t\t|‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾|");
-	puts("\t\t\t\t|  REGISTRAZIONE PERSONAL TRAINER  |");
-	puts("\t\t\t\t|__________________________________|\n");
     User user;
     int failed_attempts = 0;
     do {
+        clearScreen();
+        showMyTitle();
+        puts("\t\t\t\t|‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾|");
+	    puts("\t\t\t\t|  REGISTRAZIONE PERSONAL TRAINER  |");
+	    puts("\t\t\t\t|__________________________________|\n");
         if(failed_attempts == 3){
+            printError("HAI FATTO TROPPI ERRORI, FAI PIU' ATTENZIONE.");
             return false;
         }
         memset(&user, 0, sizeof(User));
@@ -43,6 +47,7 @@ static bool registraNuovoPT(){
             }
         }
         failed_attempts ++;
+        printf("\033[41mErrore numero %d\033[0m",failed_attempts);
     } while (true) ;
 }
 

@@ -1,13 +1,13 @@
 #include "db.h"
 
 
-bool moveArmyBetweenTerritories(char *username, int *num_carri, char *terr1, char *terr2){
+bool archiveRoutine(User *loggedUser, char *cf){
 	MYSQL_STMT* prepared_stmt;
-	MYSQL_BIND param[4];
+	MYSQL_BIND param[2];
 
 	// Prepare stored procedure call
-	if (!setup_prepared_stmt(&prepared_stmt, "call sposta_carriArmati_tra_territori(?, ?, ?, ?)", conn)) {
-		finish_with_stmt_error(conn, prepared_stmt, "Unable to initialize prepared statement for procedure: sposta_carriArmati_tra_territori", false);
+	if (!setup_prepared_stmt(&prepared_stmt, "call archivia_scheda(?, ?)", conn)) {
+		finish_with_stmt_error(conn, prepared_stmt, "Unable to initialize prepared statement for procedure: archivia_scheda", false);
 		goto err1;
 	}
 
@@ -15,33 +15,26 @@ bool moveArmyBetweenTerritories(char *username, int *num_carri, char *terr1, cha
 	memset(param, 0, sizeof(param));
 
 	param[0].buffer_type = MYSQL_TYPE_VAR_STRING; // IN
-	param[0].buffer = username;
-	param[0].buffer_length = strlen(username);
+	param[0].buffer = cf;
+	param[0].buffer_length = strlen(cf);
 
-	param[1].buffer_type = MYSQL_TYPE_LONG; // IN
-	param[1].buffer = num_carri;
-	param[1].buffer_length = sizeof(num_carri);
-
-	param[2].buffer_type = MYSQL_TYPE_VAR_STRING; // IN
-	param[2].buffer = terr1;
-	param[2].buffer_length = strlen(terr1);
-
-	param[3].buffer_type = MYSQL_TYPE_VAR_STRING; // IN
-	param[3].buffer = terr2;
-	param[3].buffer_length = strlen(terr2);
+	param[1].buffer_type = MYSQL_TYPE_VAR_STRING; // IN
+	param[1].buffer = loggedUser->cf;
+	param[1].buffer_length = strlen(loggedUser->cf);
 
 	// Binding
 	if (mysql_stmt_bind_param(prepared_stmt, param) != 0) {
-		finish_with_stmt_error(conn, prepared_stmt, "Could not bind parameters in procedure: sposta_carriArmati_tra_territori", true);
+		finish_with_stmt_error(conn, prepared_stmt, "Could not bind parameters in procedure: archivia_scheda", true);
 		goto err;
 	}
 
 	// Execution
 	if (mysql_stmt_execute(prepared_stmt) != 0) {
-		print_stmt_error(prepared_stmt, "Error in execution for procedure: sposta_carriArmati_tra_territori");
+		print_stmt_error(prepared_stmt, "Error in execution for procedure: archivia_scheda");
 		goto err;
 	}
-
+	
+	mysql_stmt_next_result(prepared_stmt);
 	mysql_stmt_close(prepared_stmt);
 	return true;
 err:
@@ -52,13 +45,13 @@ err1:
 
 
 
-bool attackTerritory(char *username, int *num_carri, char *terr1, char *terr2, int *num_army_loss_attack, int *num_army_loss_defense,int *is_conquered, int *i_won){
+bool showAllMyCustomers(User *loggedUser){
 	MYSQL_STMT* prepared_stmt;
-	MYSQL_BIND param[8];
+	MYSQL_BIND param[1];
 
 	// Prepare stored procedure call
-	if (!setup_prepared_stmt(&prepared_stmt, "call attacca_territorio(?, ?, ?, ?, ?, ?, ?, ?)", conn)) {
-		finish_with_stmt_error(conn, prepared_stmt, "Unable to initialize prepared statement for procedure: attacca_territorio", false);
+	if (!setup_prepared_stmt(&prepared_stmt, "call visualizza_clienti(?)", conn)) {
+		finish_with_stmt_error(conn, prepared_stmt, "Unable to initialize prepared statement for procedure: visualizza_clienti", false);
 		goto err1;
 	}
 
@@ -66,79 +59,23 @@ bool attackTerritory(char *username, int *num_carri, char *terr1, char *terr2, i
 	memset(param, 0, sizeof(param));
 
 	param[0].buffer_type = MYSQL_TYPE_VAR_STRING; // IN
-	param[0].buffer = username;
-	param[0].buffer_length = strlen(username);
-
-	param[1].buffer_type = MYSQL_TYPE_LONG; // IN
-	param[1].buffer = num_carri;
-	param[1].buffer_length = sizeof(num_carri);
-
-	param[2].buffer_type = MYSQL_TYPE_VAR_STRING; // IN
-	param[2].buffer = terr1;
-	param[2].buffer_length = strlen(terr1);
-
-	param[3].buffer_type = MYSQL_TYPE_VAR_STRING; // IN
-	param[3].buffer = terr2;
-	param[3].buffer_length = strlen(terr2);
-
-	param[4].buffer_type = MYSQL_TYPE_LONG; // OUT
-	param[4].buffer = num_army_loss_attack;
-	param[4].buffer_length = sizeof(num_army_loss_attack);
-
-	param[5].buffer_type = MYSQL_TYPE_LONG; // OUT
-	param[5].buffer = num_army_loss_defense;
-	param[5].buffer_length = sizeof(num_army_loss_defense);
-
-	param[6].buffer_type = MYSQL_TYPE_LONG; // OUT
-	param[6].buffer = is_conquered;
-	param[6].buffer_length = sizeof(is_conquered);
-
-	param[7].buffer_type = MYSQL_TYPE_LONG; // OUT
-	param[7].buffer = i_won;
-	param[7].buffer_length = sizeof(i_won);
+	param[0].buffer = loggedUser->cf;
+	param[0].buffer_length = strlen(loggedUser->cf);
 
 	// Binding
 	if (mysql_stmt_bind_param(prepared_stmt, param) != 0) {
-		finish_with_stmt_error(conn, prepared_stmt, "Could not bind parameters in procedure: attacca_territorio", true);
+		finish_with_stmt_error(conn, prepared_stmt, "Could not bind parameters in procedure: visualizza_clienti", true);
 		goto err;
 	}
 
 	// Execution
 	if (mysql_stmt_execute(prepared_stmt) != 0) {
-		print_stmt_error(prepared_stmt, "Error in execution for procedure: attacca_territorio");
+		print_stmt_error(prepared_stmt, "Error in execution for procedure: visualizza_clienti");
 		goto err;
 	}
-
-	// Prepare output params
-	memset(param, 0, sizeof(param));
-	param[0].buffer_type = MYSQL_TYPE_LONG; // OUT
-	param[0].buffer = num_army_loss_attack;
-	param[0].buffer_length = sizeof(num_army_loss_attack);
-
-	param[1].buffer_type = MYSQL_TYPE_LONG; // OUT
-	param[1].buffer = num_army_loss_defense;
-	param[1].buffer_length = sizeof(num_army_loss_defense);
-
-	param[2].buffer_type = MYSQL_TYPE_LONG; // OUT
-	param[2].buffer = is_conquered;
-	param[2].buffer_length = sizeof(is_conquered);
-
-	param[3].buffer_type = MYSQL_TYPE_LONG; // OUT
-	param[3].buffer = i_won;
-	param[3].buffer_length = sizeof(i_won);
-
-	// Binding res
-	if (mysql_stmt_bind_result(prepared_stmt,param)){
-		print_stmt_error(prepared_stmt, "Could not retrieve output in procedure: attacca_territorio");
-		goto err;
-	}
-
-	// Retrieve output parameter
-	if (mysql_stmt_fetch(prepared_stmt)){
-		print_stmt_error(prepared_stmt, "Could not buffer result in procedure: attacca_territorio");
-		goto err;
-	}
-
+	
+	dump_result_set(conn, prepared_stmt, "\n");
+	mysql_stmt_next_result(prepared_stmt);
 	mysql_stmt_close(prepared_stmt);
 	return true;
 err:

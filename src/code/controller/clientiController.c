@@ -180,13 +180,11 @@ static bool iniziaSessione(User *loggedUser) {
         if (startWorkout(workUser)) {
             if(sessioneIniziata(workUser, loggedUser)){
                 free(workUser);
-                printSuccess("SESSIONE TERMINATA CON SUCCESSO.\n");
                 return true;
             }
             printError("SESSIONE TERMINATA CON ERRORI.\n");
         }
         free(workUser);
-        printError("SESSIONE NON INIZATA.\n");
         return false;
     } while (true);
 }
@@ -214,15 +212,15 @@ clean_up:
         printf("Codice Fiscale non preso.");
         return;
     }
-    puts("");
-    puts("");
-    puts("");
-    puts("");
-    printf("\033[47m\033[30mCODICE FISCALE: %s\033[0m", loggedUser->cf);
-    puts("");
-    puts("");
     while(true)
     {
+        puts("");
+        puts("");
+        puts("");
+        puts("");
+        printf("\033[47m\033[30mCODICE FISCALE: %s\033[0m", loggedUser->cf);
+        puts("");
+        puts("");
         if(prev_error){
             printError("\t Ripristino menu dopo troppi tentativi errati\n\t Stai più attento!");
             prev_error = false;
@@ -239,6 +237,8 @@ clean_up:
                 failed_attempts ++;
                 break;
             }
+            printSuccess("SESSIONE TERMINATA CON SUCCESSO.\n");
+            sleep(5);
             goto clean_up;
         case 2:
             if(!mostraSchedaAttiva(loggedUser)){

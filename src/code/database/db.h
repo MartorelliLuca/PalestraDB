@@ -43,3 +43,5 @@ bool moveArmyBetweenTerritories(char *username, int *num_carri, char *terr1, cha
 bool displayMissingSets(workoutCustomer *workUser, char *esercizio);
 
 bool getCustomerCf(User *loggedUser);
+
+bool archiveRoutine(User *loggedUser, char *cf);

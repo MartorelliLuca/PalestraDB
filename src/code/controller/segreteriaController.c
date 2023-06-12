@@ -51,17 +51,6 @@ static bool registraNuovoPT(){
     } while (true) ;
 }
 
-static bool vediReport(){
-    do {
-        printSuccess("-- GENERAZIONE REPORT INIZIATA --");
-        if(retrieveReport()){
-            printSuccess("-- GENERAZIONE REPORT TERMINATA --");
-            return true;
-        }
-        return false;
-    } while (true) ;
-}
-
 
 
 void segreteriaController(char *username){

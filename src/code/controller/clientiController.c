@@ -251,6 +251,7 @@ clean_up:
             }
             break;
         case 4:
+            free(loggedUser);
             return;
         case 5:
             goto clean_up;

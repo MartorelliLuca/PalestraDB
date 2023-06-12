@@ -9,8 +9,16 @@ int promptMenuPt(){
     printBoldGreen("[2] ");
     printf("CREA UNA NUOVA SCHEDA\n");
     printBoldGreen("[3] ");
-    printf("TORNA AL MENU PRINCIPALE\n");
+    printf("MODIFICA LA SCHEDA, DI UN MIO CLIENTE, NON COMPLETATA\n");
     printBoldGreen("[4] ");
+    printf("FAI UN REPORT SUI CLIENTI\n");
+    printBoldGreen("[5] ");
+    printf("MOSTRA LA SCHEDA DI UN QUALUNQUE CLIENTE\n");
+    printBoldGreen("[6] ");
+    printf("MOSTRA TUTTI I MIEI CLIENTI\n");
+    printBoldGreen("[7] ");
+    printf("TORNA AL MENU PRINCIPALE\n");
+    printBoldGreen("[8] ");
     printf("CLEAN SCREEN\n");
     printBoldGreen(">> ");
     if(!getInteger("", &input)){

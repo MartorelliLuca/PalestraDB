@@ -1,16 +1,96 @@
 #include "ptController.h"
 #define CF_MAX_SIZE 20 + 1
+#define EXERCISE_MAX_SIZE 30 + 1
+
+bool generaReport(User *loggedUser){
+    Date *date1 = malloc(sizeof(Date));
+    if (date1 == NULL) {
+        printf("Errore: impossibile allocare memoria per la struttura date1.\n");
+        exit(EXIT_FAILURE);
+    }
+    Date *date2 = malloc(sizeof(Date));
+    if (date2 == NULL) {
+        printf("Errore: impossibile allocare memoria per la struttura date2.\n");
+        exit(EXIT_FAILURE);
+    }
+    printBoldGreen("STAI PER INSERIRE LA PRIMA DATA PER L'INTERVALLO DEL REPORT\n");
+    if(!getDateFromUser(date1)){
+        return false;
+    }
+    printBoldGreen("STAI PER INSERIRE LA PRIMA DATA PER L'INTERVALLO DEL REPORT\n");
+    if(!getDateFromUser(date2)){
+        return false;
+    }
+    printSuccess("-- ECCO IL REPORT PER I TUOI CLIENTI --");
+    if(!retrieveReport(loggedUser, date1, date2)){
+        return false;
+    }
+    free(date1);
+    free(date2);
+    return true;
+}
+
+static bool mostraSchedaAttiva(User *loggedUser){
+    //piccola modifica per i pt che prima scelgono il cliente e poi vedono la sua scheda
+    while(1){
+        if(getInput("INSERISCI IL CODICE FISCALE DEL CLIENTE DI CUI DESIDERI VISUALIZZARE LA SCHEDA DI ALLENAMENTO\n>>", loggedUser->cf, USERNAME_MAX_SIZE)){
+         break;   
+        }
+    }
+    printf("\n\033[47m\033[30m-- ECCO LA SCHEDA ATTIVA \033[0m");
+    printf("\033[47m\033[30mDI %s --\033[0m\n\n", loggedUser->cf);
+    if (displayNewRoutine(loggedUser))
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
+
+bool inserisciEsercizi(User *loggedUser, char *Cliente, char *dataInizioScheda){
+    clearScreen();
+    int numEsercizi, i, len;
+    char esercizio[EXERCISE_MAX_SIZE];
+    while(1){
+        showMyTitle();
+        puts("\t\t\t\t|‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾|");
+        puts("\t\t\t\t|       INSERIMENTO ESERCIZI       |");
+	    puts("\t\t\t\t|__________________________________|");
+        printf("\033[44m\033[0m\n");
+        if(getInteger("QUANTI ESERCIZI VUOI METTERE NELLA SCHEDA?\n>>", &numEsercizi)){
+            while(i!=numEsercizi){
+                if(i!=0){
+                    clearScreen();
+                }
+                printBoldGreen("INSERISCI L'ESERCIZIO NUMERO");
+                printf("%d", i);
+                printBoldGreen("DELLA SCHEDA\n>>");
+                fgets(esercizio, EXERCISE_MAX_SIZE, stdin);
+                len = strlen(esercizio);
+                esercizio[len-1]='\0';
+                //if(insertExercise()){
+                //    i++;
+                //}
+                printError("ESERCIZIO NON INSERITO CORRETTAMENTE.\n");
+            }
+            //continua con il ciclo
+        }
+        printBoldGreen("STAI PIU' ATTENTO\n\n");
+    }
+    return true;
+}
 
 bool archiviaScheda(User *loggedUser){
     int len, failed_attempts = 0;
-    char Cliente[CF_MAX_SIZE], *cancella;
+    char Cliente[CF_MAX_SIZE];
     clearScreen();
-clean_up:
     showMyTitle();
     puts("\t\t\t\t|‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾|");
     puts("\t\t\t\t|       ARCHIVIAZIONE SCHEDA       |");
 	puts("\t\t\t\t|__________________________________|");
-    
+    printf("\033[44m\033[0m\n");
     while(true)
     {
         puts("");
@@ -53,9 +133,8 @@ clean_up:
 
 bool creaNuovaSchedaAttiva(User *loggedUser){
     int len, failed_attempts = 0;
-    char Cliente[CF_MAX_SIZE], *cancella;
+    char Cliente[CF_MAX_SIZE], dataInizioScheda[DATE_SIZE];
     clearScreen();
-clean_up:
     showMyTitle();
     puts("\t\t\t\t|‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾|");
     puts("\t\t\t\t|      CREAZIONE NUOVA SCHEDA      |");
@@ -88,7 +167,9 @@ clean_up:
             if(Cliente[len-1]=='\n'){
                 Cliente[len-1]='\0';
             }
-            if(createNewRoutine(loggedUser, Cliente)){
+            if(createNewRoutine(loggedUser, Cliente, dataInizioScheda)){
+                printf("Data: %s\n\n", dataInizioScheda);
+                inserisciEsercizi(loggedUser, Cliente, dataInizioScheda);
                 return true;
             }
             return false;
@@ -154,8 +235,35 @@ clean_up:
             }
             break;
         case 3:
-            return;
+            /*if(!modificaScheda(loggedUser)){
+                failed_attempts ++;
+            }*/
+            break;
         case 4:
+            if(generaReport(loggedUser)){
+                printSuccess("REPORT STAMPATO CON SUCCESSO.\n");
+                break;
+            }
+            printError("UNA DELLE DUE DATE CHE HAI PASSATO NEL REPORT NON HA SENSO");
+            break;
+        case 5:
+            User *Cliente= malloc(sizeof(User));
+            if (Cliente == NULL) {
+                printf("Errore: impossibile allocare memoria per la struttura Cliente.\n");
+                exit(EXIT_FAILURE);
+            }
+            if(!mostraSchedaAttiva(Cliente)){
+                failed_attempts ++;
+            }
+            free(Cliente);
+            break;
+        case 6:
+            showAllMyCustomers(loggedUser);
+            break;
+        case 7:
+            free(loggedUser);
+            return;
+        case 8:
             goto clean_up;
         default:
             printError("Scegli tra le opzioni proposte!");

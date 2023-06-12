@@ -22,7 +22,7 @@ bool showOldRoutines(User *user, int *num);
 
 bool displayNewRoutine(User *loggedUser); //valuta di mettere già qua dentro il codice fiscale
 
-bool retrieveReport();
+bool retrieveReport(User *loggedUser,Date *date1, Date *date2);
 
 bool scegliSchedaArchiviata(User *loggedUser, Date *date);
 
@@ -46,4 +46,6 @@ bool getCustomerCf(User *loggedUser);
 
 bool archiveRoutine(User *loggedUser, char *cf);
 
-bool createNewRoutine(User *loggedUser, char *Cliente);
+bool createNewRoutine(User *loggedUser, char *Cliente, char dataInizioScheda[DATE_SIZE]);
+
+bool showAllMyCustomers(User *loggedUser);

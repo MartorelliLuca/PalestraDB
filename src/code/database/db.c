@@ -476,13 +476,13 @@ err1:
 	return false;
 }
 
-bool createNewGameRoom(char *nomeStanza){
+bool createNewRoutine(User *loggedUser, char *Cliente){
 	MYSQL_STMT* prepared_stmt;
-	MYSQL_BIND param[1];
+	MYSQL_BIND param[2];
 
 	// Prepare stored procedure call
-	if (!setup_prepared_stmt(&prepared_stmt, "call crea_nuova_stanza(?)", conn)) {
-		finish_with_stmt_error(conn, prepared_stmt, "Unable to initialize prepared statement for procedure: crea_nuova_stanza", false);
+	if (!setup_prepared_stmt(&prepared_stmt, "call crea_nuova_scheda(?, ?)", conn)) {
+		finish_with_stmt_error(conn, prepared_stmt, "Unable to initialize prepared statement for procedure: crea_nuova_scheda", false);
 		goto err1;
 	}
 
@@ -490,21 +490,26 @@ bool createNewGameRoom(char *nomeStanza){
 	memset(param, 0, sizeof(param));
 
 	param[0].buffer_type = MYSQL_TYPE_VAR_STRING; // IN
-	param[0].buffer = nomeStanza;
-	param[0].buffer_length = strlen(nomeStanza);
+	param[0].buffer = Cliente;
+	param[0].buffer_length = strlen(Cliente);
+
+	param[1].buffer_type = MYSQL_TYPE_VAR_STRING; // IN
+	param[1].buffer = loggedUser->cf;
+	param[1].buffer_length = strlen(loggedUser->cf);
 
 	// Binding
 	if (mysql_stmt_bind_param(prepared_stmt, param) != 0) {
-		finish_with_stmt_error(conn, prepared_stmt, "Could not bind parameters in procedure: crea_nuova_stanza", true);
+		finish_with_stmt_error(conn, prepared_stmt, "Could not bind parameters in procedure: crea_nuova_scheda", true);
 		goto err;
 	}
 
 	// Execution
 	if (mysql_stmt_execute(prepared_stmt) != 0) {
-		print_stmt_error(prepared_stmt, "Error in execution for procedure: crea_nuova_stanza");
+		print_stmt_error(prepared_stmt, "Error in execution for procedure: crea_nuova_scheda");
 		goto err;
 	}
 
+	dump_result_set(conn, prepared_stmt, "");
 	mysql_stmt_close(prepared_stmt);
 	return true;
 err:

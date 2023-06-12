@@ -20,7 +20,8 @@ clean_up:
             return false;
         }
         if(showAllMyCustomers(loggedUser)){ 
-            printBoldGreen("\n\nSeleziona il cliente al quale vuoi archiviare la scheda\n\n");
+            printBoldGreen("\n\nSELEZIONA IL CLIENTE AL QUALE VUOI ARCHIVIARE LA SCHEDA ATTIVA\n");
+            printBoldGreen(">>");
             fgets(Cliente, CF_MAX_SIZE, stdin);
             len=strlen(Cliente);
             if(len>=18){
@@ -51,7 +52,52 @@ clean_up:
 
 
 bool creaNuovaSchedaAttiva(User *loggedUser){
-    return true;
+    int len, failed_attempts = 0;
+    char Cliente[CF_MAX_SIZE], *cancella;
+    clearScreen();
+clean_up:
+    showMyTitle();
+    puts("\t\t\t\t|‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾|");
+    puts("\t\t\t\t|      CREAZIONE NUOVA SCHEDA      |");
+	puts("\t\t\t\t|__________________________________|");
+    
+    while(true)
+    {
+        puts("");
+        puts("");
+        if(failed_attempts == 5){
+            printError("\t Ripristino menu dopo troppi tentativi errati\n\t Stai più attento!");
+            return false;
+        }
+        if(showAllMyCustomers(loggedUser)){ 
+            printBoldGreen("\n\nSELEZIONA IL CLIENTE AL QUALE VUOI CREARE UNA NUOVA SCHEDA\n");
+            printBoldGreen(">>");
+            fgets(Cliente, CF_MAX_SIZE, stdin);
+            len=strlen(Cliente);
+            if(len>=18){
+                while (getchar() != '\n'){}
+                printError("TROPPI CARATTERI INSERITI: UN CODICE FISCALE HA ESATTAMENTE 16 CARATTERI\n\n");
+                failed_attempts++;
+                continue;
+            }
+            if(len<=16){
+                printError("POCHI CARATTERI INSERITI: UN CODICE FISCALE HA ESATTAMENTE 16 CARATTERI\n\n");
+                failed_attempts++;
+                continue;
+            }
+            if(Cliente[len-1]=='\n'){
+                Cliente[len-1]='\0';
+            }
+            if(createNewRoutine(loggedUser, Cliente)){
+                return true;
+            }
+            return false;
+        }else{
+            printError("ERRORE IN APERTURA LISTA CLIENTI");
+            sleep(5);
+            return false;
+        }
+    }
 }
 
 void ptController(char* username){

@@ -45,3 +45,5 @@ bool displayMissingSets(workoutCustomer *workUser, char *esercizio);
 bool getCustomerCf(User *loggedUser);
 
 bool archiveRoutine(User *loggedUser, char *cf);
+
+bool createNewRoutine(User *loggedUser, char *Cliente);

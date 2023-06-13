@@ -49,3 +49,7 @@ bool archiveRoutine(User *loggedUser, char *cf);
 bool createNewRoutine(User *loggedUser, char *Cliente, char dataInizioScheda[DATE_SIZE]);
 
 bool showAllMyCustomers(User *loggedUser);
+
+bool recoverSession(User *loggedUser, int *yesOrNo);
+
+bool recoverSessionData(workoutCustomer *workUser);

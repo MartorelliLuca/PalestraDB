@@ -124,7 +124,6 @@ bool archiviaScheda(User *loggedUser){
             return false;
         }else{
             printError("ERRORE IN APERTURA LISTA CLIENTI");
-            sleep(5);
             return false;
         }
     }
@@ -175,7 +174,6 @@ bool creaNuovaSchedaAttiva(User *loggedUser){
             return false;
         }else{
             printError("ERRORE IN APERTURA LISTA CLIENTI");
-            sleep(5);
             return false;
         }
     }

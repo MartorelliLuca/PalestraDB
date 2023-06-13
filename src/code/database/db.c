@@ -541,6 +541,143 @@ err1:
 
 }
 
+bool recoverSessionData(workoutCustomer *workUser){
+	MYSQL_STMT* prepared_stmt;
+	MYSQL_BIND param[4];
+	
+	// Prepare stored procedure call
+	if (!setup_prepared_stmt(&prepared_stmt, "call recupera_dati_sessione(?, ?, ?, ?)", conn)) {
+		finish_with_stmt_error(conn, prepared_stmt, "Unable to initialize prepared statement for procedure: recupera_dati_sessione", false);
+		goto err1;
+	}
+	// Prepare parameters
+	memset(param, 0, sizeof(param));
+
+	param[0].buffer_type = MYSQL_TYPE_VAR_STRING; // IN
+	param[0].buffer = workUser->cf;
+	param[0].buffer_length = strlen(workUser->cf);
+
+	param[1].buffer_type = MYSQL_TYPE_VAR_STRING; // OUT
+	param[1].buffer = workUser->dataSessione;
+	param[1].buffer_length = strlen(workUser->dataSessione);
+
+	param[2].buffer_type = MYSQL_TYPE_VAR_STRING; // OUT
+	param[2].buffer = workUser->dataInizioScheda;
+	param[2].buffer_length = strlen(workUser->dataInizioScheda);
+
+	param[3].buffer_type = MYSQL_TYPE_VAR_STRING; // OUT
+	param[3].buffer = workUser->orarioInizio;
+	param[3].buffer_length = strlen(workUser->orarioInizio);
+
+
+	// Binding
+	if (mysql_stmt_bind_param(prepared_stmt, param) != 0) {
+		finish_with_stmt_error(conn, prepared_stmt, "Could not bind parameters in procedure: recupera_dati_sessione", true);
+		goto err;
+	}
+
+	// Execution
+	if (mysql_stmt_execute(prepared_stmt) != 0) {
+		print_stmt_error(prepared_stmt, "Error in execution for procedure: recupera_dati_sessione");
+		goto err;
+	}
+
+	// Prepare output params
+	param[0].buffer_type = MYSQL_TYPE_VAR_STRING; // OUT
+	param[0].buffer = workUser->dataSessione;
+	param[0].buffer_length = DATE_SIZE - 1;
+
+	param[1].buffer_type = MYSQL_TYPE_VAR_STRING; // OUT
+	param[1].buffer = workUser->dataInizioScheda;
+	param[1].buffer_length = DATE_SIZE - 1;
+
+	param[2].buffer_type = MYSQL_TYPE_VAR_STRING; // OUT
+	param[2].buffer = workUser->orarioInizio;
+	param[2].buffer_length = TIME_SIZE - 1;
+
+	// Binding res
+	if (mysql_stmt_bind_result(prepared_stmt,param)){
+		print_stmt_error(prepared_stmt, "Could not retrieve output in procedure: recupera_dati_sessione");
+		goto err;
+	}
+	
+	// Retrieve output parameter
+	if (mysql_stmt_fetch(prepared_stmt)){
+		print_stmt_error(prepared_stmt, "Could not buffer result in procedure: recupera_dati_sessione");
+		goto err;
+	}
+	
+	dump_result_set(conn, prepared_stmt, "");
+	mysql_stmt_next_result(prepared_stmt);
+    
+	mysql_stmt_close(prepared_stmt);
+	return true;
+err:
+	mysql_stmt_close(prepared_stmt);
+err1:
+	return false;
+}
+
+bool recoverSession(User *loggedUser, int *yesOrNo){
+	MYSQL_STMT* prepared_stmt;
+	MYSQL_BIND param[2];
+
+	// Prepare stored procedure call
+	if (!setup_prepared_stmt(&prepared_stmt, "call riprendi_sessione(?, ?)", conn)) {
+		finish_with_stmt_error(conn, prepared_stmt, "Unable to initialize prepared statement for procedure: riprendi_sessione", false);
+		goto err1;
+	}
+
+	// Prepare parameters
+	memset(param, 0, sizeof(param));
+
+	param[0].buffer_type = MYSQL_TYPE_VAR_STRING; // IN
+	param[0].buffer = loggedUser->cf;
+	param[0].buffer_length = strlen(loggedUser->cf);
+
+	param[1].buffer_type = MYSQL_TYPE_LONG; // OUT
+	param[1].buffer = yesOrNo;
+	param[1].buffer_length = sizeof(yesOrNo);
+	
+
+	// Binding
+	if (mysql_stmt_bind_param(prepared_stmt, param) != 0) {
+		finish_with_stmt_error(conn, prepared_stmt, "Could not bind parameters in procedure: riprendi_sessione", true);
+		goto err;
+	}
+
+	// Execution
+	if (mysql_stmt_execute(prepared_stmt) != 0) {
+		print_stmt_error(prepared_stmt, "Error in execution for procedure: riprendi_sessione");
+		goto err;
+	}
+
+	// Prepare output params
+	memset(param, 0, sizeof(param));
+	param[0].buffer_type = MYSQL_TYPE_LONG; // OUT
+	param[0].buffer = yesOrNo;
+	param[0].buffer_length = sizeof(yesOrNo);
+
+	// Binding res
+	if (mysql_stmt_bind_result(prepared_stmt,param)){
+		print_stmt_error(prepared_stmt, "Could not retrieve output in procedure: riprendi_sessione");
+		goto err;
+	}
+
+	// Retrieve output parameter
+	if (mysql_stmt_fetch(prepared_stmt)){
+		print_stmt_error(prepared_stmt, "Could not buffer result in procedure: riprendi_sessione");
+		goto err;
+	}
+
+	mysql_stmt_close(prepared_stmt);
+	return true;
+err:
+	mysql_stmt_close(prepared_stmt);
+err1:
+	return false;
+}
+
 bool retrieveReport(User *loggedUser,Date *date1, Date *date2){
 	MYSQL_STMT* prepared_stmt;
 	MYSQL_BIND param[3];

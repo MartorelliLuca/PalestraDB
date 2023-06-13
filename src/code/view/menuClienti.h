@@ -8,6 +8,4 @@ int promptMenuSessione();
 
 bool getDateFromUser(Date *date);
 
-int promptMenuSessione();
-
 int promptMenuEsercizi();

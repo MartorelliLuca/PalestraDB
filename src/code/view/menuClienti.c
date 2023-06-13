@@ -10,12 +10,14 @@ int promptMenuClienti(){
     printBoldGreen("[3] ");
     printf("MOSTRA SCHEDE ARCHIVIATE DA VISUALIZZARE\n");
     printBoldGreen("[4] ");
-    printf("TORNA AL MENU PRINCIPALE\n");
+    printf("RECUPERA SESSIONE INIZIATA\n");
     printBoldGreen("[5] ");
+    printf("TORNA AL MENU PRINCIPALE\n");
+    printBoldGreen("[6] ");
     printf("CLEAN SCREEN\n");
     printBoldGreen(">> ");
     if(!getInteger("", &input)){
-            return -1;
+        return -1;
     }
     return input;
 }

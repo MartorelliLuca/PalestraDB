@@ -43,8 +43,6 @@ static bool staiEseguendo(workoutCustomer *workUser, char *esercizio, int serieE
     bool prev_error = false;
     int input, failed_attempts, serie=serieEsercizio;
 clean_up:
-    clearScreen();
-    showMyTitle();
     while(true)
     {
         printBoldGreen("SEI ARRIVATO ALLA SERIE N°");
@@ -68,7 +66,8 @@ clean_up:
             }
             printf("%d", serie);
             serie++;
-            printSuccess("SERIE AGGIUNTA CON SUCCESSO\n");
+            printSuccess("SERIE AGGIUNTA CON SUCCESSO");
+            puts("");
             break;
         case 2:                                                     //Termina prima esercizio
             return true;
@@ -91,7 +90,6 @@ clean_up:
 static bool eseguiEsercizio(workoutCustomer *workUser){
     puts("");
     puts("");
-    showMyTitle();
     char esercizio[EXERCISE_MAX_SIZE];
     int serieEsercizio, len;
     printBoldGreen("QUALE ESERCIZIO VUOI ESEGUIRE?\n");
@@ -138,6 +136,7 @@ clean_up:
             if(!eseguiEsercizio(workUser)){
                 failed_attempts ++;
             }
+            goto clean_up;
             break;
         case 2:
             if(!displayNewRoutine(loggedUser)){
@@ -190,6 +189,7 @@ static bool iniziaSessione(User *loggedUser) {
 }
 
 
+
 void clientiController(char* username){
     bool prev_error = false;
 clean_up:
@@ -199,7 +199,7 @@ clean_up:
     puts("\t\t\t\t|          AREA  CLIENTI          |");
 	puts("\t\t\t\t|_________________________________|");
     printf("\t\t\t\t     Bentornato/a %s.\n\n",username);
-    int input;
+    int input, yesOrNo;
     int failed_attempts = 0;
 
     User* loggedUser = malloc(sizeof(User));
@@ -237,9 +237,8 @@ clean_up:
                 failed_attempts ++;
                 break;
             }
-            printSuccess("SESSIONE TERMINATA CON SUCCESSO.\n");
-            sleep(5);
-            goto clean_up;
+            printSuccess("SESSIONE TERMINATA CON SUCCESSO\n");
+            break;
         case 2:
             if(!mostraSchedaAttiva(loggedUser)){
                 failed_attempts ++;
@@ -251,9 +250,36 @@ clean_up:
             }
             break;
         case 4:
+            if(recoverSession(loggedUser, &yesOrNo)){
+                if(yesOrNo){
+                    workoutCustomer* workUser = malloc(sizeof(workoutCustomer));
+                    if (workUser == NULL) {
+                        printf("Errore: impossibile allocare memoria per la struttura workUser.\n");
+                        exit(EXIT_FAILURE);
+                    }
+                    strcpy(workUser->cf, loggedUser->cf);
+                    if(recoverSessionData(workUser)){
+                        if(sessioneIniziata(workUser, loggedUser)){
+                            free(workUser);
+                            printSuccess("SESSIONE TERMINATA CON SUCCESSO\n");
+                            break;
+                        }
+                        printError("SESSIONE TERMINATA CON ERRORI.\n");
+                        break;
+                    }
+                    printError("I DATI DELLA SESSIONE NON SONO STATI RECUPERATI CORRETTAMENTE\n");
+                    break;
+                }
+                printError("IMPOSSIBILE RECUPERARE LA SESSIONE DI ALLENAMENTO:");
+                printError("SI POSSONO RECUPERARE SOLO SESSIONI INIZIATE MA NON FINITE");
+                break;
+            }
+            failed_attempts++;
+            break;
+        case 5:
             free(loggedUser);
             return;
-        case 5:
+        case 6:
             goto clean_up;
         default:
             printError("Scegli tra le opzioni proposte!");

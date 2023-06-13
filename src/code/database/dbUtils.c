@@ -20,14 +20,10 @@ void print_stmt_error(MYSQL_STMT* stmt, char* message)
 void prepareDateParam(Date *datePtr , MYSQL_TIME *mysqlTime) {
 
     memset(mysqlTime, 0, sizeof(MYSQL_TIME)) ;
-	
-printf("1y %d m %d d %d\n\n", datePtr->year, datePtr->month, datePtr->day);
 
     mysqlTime->day = datePtr->day ;
     mysqlTime->month = datePtr->month ;
     mysqlTime->year = datePtr->year ;
-	printf("2y %d m %d d %d\n\n", datePtr->year, datePtr->month, datePtr->day);
-	fflush(stdout);
 }
 
 

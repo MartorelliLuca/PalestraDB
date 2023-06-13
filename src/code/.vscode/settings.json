@@ -6,6 +6,7 @@
         "menuclienti.h": "c",
         "ptcontroller.h": "c",
         "logincontroller.h": "c",
-        "structs.h": "c"
+        "structs.h": "c",
+        "inout.h": "c"
     }
 }

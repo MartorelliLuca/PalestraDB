@@ -197,7 +197,7 @@ clean_up:
     puts("\t\t\t\t|          AREA  CLIENTI          |");
 	puts("\t\t\t\t|_________________________________|");
     printf("\t\t\t\t     Bentornato/a %s.\n\n",username);
-    int input, yesOrNo;
+    int input;
     int failed_attempts = 0;
 
     User* loggedUser = malloc(sizeof(User));

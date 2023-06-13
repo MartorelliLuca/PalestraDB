@@ -346,6 +346,82 @@ err1:
     return false;
 }
 
+
+bool chooseNotCompletedRoutine(char *cliente, char *date, int *maxPosition){
+	MYSQL_STMT* prepared_stmt;
+    MYSQL_BIND param[3];
+
+    // Prepare stored procedure call
+    if (!setup_prepared_stmt(&prepared_stmt, "call scegli_scheda_attiva_non_completa(?, ?, ?)", conn)) {
+        finish_with_stmt_error(conn, prepared_stmt, "Unable to initialize prepared statement for procedure: scegli_scheda_attiva_non_completa", false);
+        goto err1;
+    }
+
+    // Prepare parameters
+    memset(param, 0, sizeof(param));
+
+    param[0].buffer_type = MYSQL_TYPE_VAR_STRING; // IN
+    param[0].buffer = cliente;
+    param[0].buffer_length = strlen(cliente);
+
+	param[1].buffer_type = MYSQL_TYPE_VAR_STRING; //OUT
+	param[1].buffer = date;
+	param[1].buffer_length = strlen(date);
+
+	param[2].buffer_type = MYSQL_TYPE_LONG; //OUT
+	param[2].buffer = maxPosition;
+	param[2].buffer_length = sizeof(*maxPosition);
+
+    // Binding
+    if (mysql_stmt_bind_param(prepared_stmt, param) != 0) {
+        finish_with_stmt_error(conn, prepared_stmt, "Could not bind parameters in procedure: scegli_scheda_attiva_non_completa", true);
+        goto err;
+    }
+
+    // Execution
+    if (mysql_stmt_execute(prepared_stmt) != 0) {
+        print_stmt_error(prepared_stmt, "Error in execution for procedure: scegli_scheda_attiva_non_completa");
+        goto err;
+    }
+
+	// Binding per l'output
+    memset(param, 0, sizeof(param));
+    param[0].buffer_type = MYSQL_TYPE_STRING; // OUT
+    param[0].buffer = date;
+	param[0].buffer_length = strlen(date);
+
+	param[1].buffer_type = MYSQL_TYPE_LONG; //OUT
+	param[1].buffer = maxPosition;
+	param[1].buffer_length = sizeof(*maxPosition);
+
+	dump_result_set(conn, prepared_stmt, "");
+	mysql_stmt_next_result(prepared_stmt);
+
+    // Binding res
+	if (mysql_stmt_bind_result(prepared_stmt,param)){
+		print_stmt_error(prepared_stmt, "Could not retrieve output in procedure: scegli_scheda_attiva_non_completa");
+		goto err;
+	}
+
+	// Retrieve output parameter
+	if (mysql_stmt_fetch(prepared_stmt)){
+		print_stmt_error(prepared_stmt, "Could not buffer result in procedure: scegli_scheda_attiva_non_completa");
+		goto err;
+	}
+
+    // Fetch and print the results
+	mysql_stmt_next_result(prepared_stmt);
+
+    mysql_stmt_close(prepared_stmt);
+    return true;
+
+err:
+    mysql_stmt_close(prepared_stmt);
+err1:
+    return false;
+
+}
+
 bool scegliSchedaArchiviata(User *loggedUser, Date *data){
 	MYSQL_STMT* prepared_stmt;
     MYSQL_BIND param[2];
@@ -617,24 +693,65 @@ err1:
 }
 
 
+bool completedRoutine(char *Cliente, Date *date){
+		MYSQL_STMT* prepared_stmt;
+	MYSQL_BIND param[2];
+	
+	// Prepare stored procedure call
+	if (!setup_prepared_stmt(&prepared_stmt, "call scheda_completata(?, ?)", conn)) {
+		finish_with_stmt_error(conn, prepared_stmt, "Unable to initialize prepared statement for procedure: scheda_completata", false);
+		goto err1;
+	}
+	// Prepare parameters
+	memset(param, 0, sizeof(param));
+
+	param[0].buffer_type = MYSQL_TYPE_VAR_STRING; // IN
+	param[0].buffer = Cliente;
+	param[0].buffer_length = strlen(Cliente);
+
+	MYSQL_TIME mysqlDate;
+    prepareDateParam(date, &mysqlDate);
+
+	param[1].buffer_type = MYSQL_TYPE_DATE; 		//IN
+	param[1].buffer = &mysqlDate;
+	param[1].buffer_length = sizeof(MYSQL_TIME);
+
+	// Binding
+	if (mysql_stmt_bind_param(prepared_stmt, param) != 0) {
+		finish_with_stmt_error(conn, prepared_stmt, "Could not bind parameters in procedure: scheda_completata", true);
+		goto err;
+	}
+
+	// Execution
+	if (mysql_stmt_execute(prepared_stmt) != 0) {
+		print_stmt_error(prepared_stmt, "Error in execution for procedure: scheda_completata");
+		goto err;
+	}
+
+	dump_result_set(conn, prepared_stmt, "");
+	mysql_stmt_next_result(prepared_stmt);
+    
+	mysql_stmt_close(prepared_stmt);
+	return true;
+err:
+	mysql_stmt_close(prepared_stmt);
+err1:
+	return false;
+}
+
 bool insertExercise(char Cliente[USERNAME_MAX_SIZE], Date *date, char esercizio[EXERCISE_MAX_SIZE], int *posizione, int *serie, int *ripetizioni){
 	MYSQL_STMT* prepared_stmt;
     MYSQL_BIND param[6];
-	printf("CHECKPOINT1");
-	fflush(stdout);
+
 	// Prepare stored procedure call
     if (!setup_prepared_stmt(&prepared_stmt, "call inserisci_esercizio(?, ?, ?, ?, ?, ?)", conn)) {
         finish_with_stmt_error(conn, prepared_stmt, "Unable to initialize prepared statement for procedure: inserisci_esercizio", false);
         goto err1;
     }
-	printf("CHECKPOINT2");
-	fflush(stdout);
+
 	// Prepare parameters
     memset(param, 0, sizeof(param));
 
-	printf("ESERCIZIO: %s\n", esercizio);
-
-	bool is_null = true ;
 
     param[0].buffer_type = MYSQL_TYPE_STRING; 	//IN
     param[0].buffer = Cliente;
@@ -668,14 +785,10 @@ bool insertExercise(char Cliente[USERNAME_MAX_SIZE], Date *date, char esercizio[
         finish_with_stmt_error(conn, prepared_stmt, "Could not bind parameters in procedure: inserisci_esercizio", true);
         goto err;
     }
-	printf("CHECKPOINT4");
-	fflush(stdout);
     
     // Execution
     if (mysql_stmt_execute(prepared_stmt) != 0) {
-        printf("CHECKPOINT5");
-		fflush(stdout);
-	
+
 		print_stmt_error(prepared_stmt, "Error in execution for procedure: inserisci_esercizio");
         goto err;
     }
@@ -745,6 +858,48 @@ err:
 	mysql_stmt_close(prepared_stmt);
 err1:
 	return false;
+}
+
+
+bool printAllNotCompletedRoutines(User *loggedUser){
+	MYSQL_STMT* prepared_stmt;
+    MYSQL_BIND param[1];
+
+    // Prepare stored procedure call
+    if (!setup_prepared_stmt(&prepared_stmt, "call visualizza_schede_non_completate(?)", conn)) {
+        finish_with_stmt_error(conn, prepared_stmt, "Unable to initialize prepared statement for procedure: visualizza_schede_non_completate", false);
+        goto err1;
+    }
+
+    // Prepare parameters
+    memset(param, 0, sizeof(param));
+
+    param[0].buffer_type = MYSQL_TYPE_VAR_STRING; // IN
+    param[0].buffer = loggedUser->cf;
+    param[0].buffer_length = strlen(loggedUser->cf);
+
+    // Binding
+    if (mysql_stmt_bind_param(prepared_stmt, param) != 0) {
+        finish_with_stmt_error(conn, prepared_stmt, "Could not bind parameters in procedure: visualizza_schede_non_completate", true);
+        goto err;
+    }
+
+    // Execution
+    if (mysql_stmt_execute(prepared_stmt) != 0) {
+        print_stmt_error(prepared_stmt, "Error in execution for procedure: visualizza_schede_non_completate");
+        goto err;
+    }
+
+    // Fetch and print the results
+	dump_result_set(conn, prepared_stmt, "\n\nECCO TUTTE LE SCHEDE NON COMPLETE CHE PUOI MODIFICARE");
+	mysql_stmt_next_result(prepared_stmt);
+    mysql_stmt_close(prepared_stmt);
+    return true;
+err:
+    mysql_stmt_close(prepared_stmt);
+err1:
+    return false;
+
 }
 
 bool registerNewCustomer(User user){
@@ -958,6 +1113,52 @@ err:
 err1:
     return false;
 }
+
+
+bool displayRoutine(User *loggedUser, User *cliente){
+	MYSQL_STMT* prepared_stmt;
+    MYSQL_BIND param[2];
+
+    // Prepare stored procedure call
+    if (!setup_prepared_stmt(&prepared_stmt, "call pt_visualizza_scheda_attiva(?, ?)", conn)) {
+        finish_with_stmt_error(conn, prepared_stmt, "Unable to initialize prepared statement for procedure: pt_visualizza_scheda_attiva", false);
+        goto err1;
+    }
+
+    // Prepare parameters
+    memset(param, 0, sizeof(param));
+
+	param[0].buffer_type = MYSQL_TYPE_VAR_STRING; // IN
+    param[0].buffer = cliente->cf;
+    param[0].buffer_length = strlen(cliente->cf);
+
+    param[1].buffer_type = MYSQL_TYPE_VAR_STRING; // IN
+    param[1].buffer = loggedUser->cf;
+    param[1].buffer_length = strlen(loggedUser->cf);
+
+    // Binding
+    if (mysql_stmt_bind_param(prepared_stmt, param) != 0) {
+        finish_with_stmt_error(conn, prepared_stmt, "Could not bind parameters in procedure: pt_visualizza_scheda_attiva", true);
+        goto err;
+    }
+
+    // Execution
+    if (mysql_stmt_execute(prepared_stmt) != 0) {
+        print_stmt_error(prepared_stmt, "Error in execution for procedure: visualizza_scheda_attiva");
+        goto err;
+    }
+
+    // Fetch and print the results
+	dump_result_set(conn, prepared_stmt, "");
+	mysql_stmt_next_result(prepared_stmt);
+    mysql_stmt_close(prepared_stmt);
+    return true;
+err:
+    mysql_stmt_close(prepared_stmt);
+err1:
+    return false;
+}
+
 
 
 bool getCustomerCf(User* loggedUser) {

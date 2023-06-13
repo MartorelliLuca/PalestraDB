@@ -36,19 +36,19 @@ bool generaReport(User *loggedUser)
     return true;
 }
 
-static bool mostraSchedaAttiva(User *loggedUser)
+static bool mostraSchedaAttivaCliente(User *loggedUser, User *cliente)
 {
     // piccola modifica per i pt che prima scelgono il cliente e poi vedono la sua scheda
     while (1)
     {
-        if (getInput("INSERISCI IL CODICE FISCALE DEL CLIENTE DI CUI DESIDERI VISUALIZZARE LA SCHEDA DI ALLENAMENTO\n>>", loggedUser->cf, USERNAME_MAX_SIZE))
+        if (getInput("INSERISCI IL CODICE FISCALE DEL CLIENTE DI CUI DESIDERI VISUALIZZARE LA SCHEDA DI ALLENAMENTO\n>> ", cliente->cf, USERNAME_MAX_SIZE))
         {
             break;
         }
     }
     printf("\n\033[47m\033[30m-- ECCO LA SCHEDA ATTIVA \033[0m");
-    printf("\033[47m\033[30mDI %s --\033[0m\n\n", loggedUser->cf);
-    if (displayNewRoutine(loggedUser))
+    printf("\033[47m\033[30mDI %s --\033[0m\n\n", cliente->cf);
+    if (displayRoutine(loggedUser, cliente))
     {
         return true;
     }
@@ -58,63 +58,129 @@ static bool mostraSchedaAttiva(User *loggedUser)
     }
 }
 
-bool inserisciEsercizi(User *loggedUser, char *Cliente, Date *date)
-{
+
+bool inserisciAltriEsercizi(char *Cliente, Date *date, int maxPosition){
     clearScreen();
-    int numEsercizi, i = 0, len, serie, ripetizioni, cancellaX=0;
-    char esercizio[EXERCISE_MAX_SIZE], *cancella, answer[3];
-    while (1)
+    int numEsercizi;
+    char esercizio[EXERCISE_MAX_SIZE], answer[3];
+    
+    showMyTitle();
+    puts("\t\t\t\t|‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾|");
+    puts("\t\t\t\t|    INSERIMENTO ALTRI ESERCIZI    |");
+    puts("\t\t\t\t|__________________________________|");
+    printf("\033[44m\033[0m\n");
+    
+    if (!getInteger("QUANTI ESERCIZI VUOI METTERE ANCORA NELLA SCHEDA?\n>> ", &numEsercizi))
     {
-        showMyTitle();
-        puts("\t\t\t\t|‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾|");
-        puts("\t\t\t\t|       INSERIMENTO ESERCIZI       |");
-        puts("\t\t\t\t|__________________________________|");
-        printf("\033[44m\033[0m\n");
-        if (getInteger("QUANTI ESERCIZI VUOI METTERE NELLA SCHEDA?\n>>", &numEsercizi))
-        {
-            printf("ESERCIZI: %d", numEsercizi);
-            while (i < numEsercizi)
-            {
-                printf("Checkpoint1");
-                if (i == 0 && cancellaX==0){
-                    cancellaX=i+1;
-                }
-                printBoldGreen("INSERISCI L'ESERCIZIO NUMERO ");
-                printf("\033[1;32m%d\033[0m", cancellaX);
-                printBoldGreen(" DELLA SCHEDA\n>>");
-                fgets(esercizio, EXERCISE_MAX_SIZE, stdin);
-                len = strlen(esercizio);
-                esercizio[len - 1] = '\0';
-                while (!getInteger("Inserisci il numero di serie da fare\n>>", &serie)){}
-                while (!getInteger("Inserisci il numero di ripetizioni da fare\n>>", &ripetizioni)){}
-                printf("serie:%d, ripetizioni:%d, posizione:%d", serie, ripetizioni, cancellaX);
-                if (!insertExercise(Cliente, date, esercizio, &cancellaX, &serie, &ripetizioni)){
-                    printError("ESERCIZIO NON INSERITO CORRETTAMENTE.");
-                    continue;
-                }
-                i++;
-                cancellaX++;
-            }
-            while(1){
-                printSuccess("USCITO DAL WHILE DEGLI ESERCIZI ORA HAI UNA FGETS\n");
-                fgets(cancella, 10, stdin);
-                getInput("SEI SODDSFATTO DELLA SCHEDA?\nLA CONSIDERI COMPLETATA?\nPER FAVORE RISPONDI CON SI O NO\n>>", answer, 3);
-                if (strcasecmp(answer, "si") == 0) {
-                    // Le stringhe sono uguali, esegui il codice qui
-                    break;
-                } else if(strcasecmp(answer, "no") == 0){
-                    //
-                    break;
-                } else{
-                    printError("RISPOSTA NON ACCETTABILE");
-                    continue;
-                }
-            }
-            // continua con il ciclo chiedendo se gli va bene di rendere la scheda completata
+        return true;
+    }
+    
+    maxPosition++;
+    for (int i = 0; i < numEsercizi; i++)
+    {
+        printBoldGreen("INSERISCI L'ESERCIZIO NUMERO ");
+        printf("\033[1;32m%d\033[0m", maxPosition);
+        printBoldGreen(" DELLA SCHEDA\n>> ");
+        fgets(esercizio, EXERCISE_MAX_SIZE, stdin);
+        esercizio[strcspn(esercizio, "\n")] = '\0';
+        
+        int serie, ripetizioni;
+        while (!getInteger("Inserisci il numero di serie da fare\n>> ", &serie)){}
+        while (!getInteger("Inserisci il numero di ripetizioni da fare\n>> ", &ripetizioni)){}
+
+        if (!insertExercise(Cliente, date, esercizio, &maxPosition, &serie, &ripetizioni)){
+            printError("ESERCIZIO NON INSERITO CORRETTAMENTE.");
+            i--;
+        }
+        else {
+            maxPosition++;
         }
     }
+    
+    while(1)
+    {
+        getInput("SEI SODDSFATTO DELLA SCHEDA?\nLA CONSIDERI COMPLETATA?\nPER FAVORE RISPONDI CON SI O NO\n>> ", answer, 3);
+        
+        if (strcasecmp(answer, "si\0") == 0)
+        {
+            if(completedRoutine(Cliente, date)){
+                printSuccess("LA SCHEDA E' STATA CREATA CON SUCCESSO");
+                return true;
+            }
+            return false;
+        }else if (strcasecmp(answer, "no\0") == 0){
+            printBoldGreen("SCHEDA FATTA, MA NON COMPLETATA\n\n");
+            return true;
+        }
+        else{
+            printError("RISPOSTA NON ACCETTABILE");
+        }
+    }
+    
     return true;
 }
+
+bool inserisciEsercizi(char *Cliente, Date *date){
+    clearScreen();
+    int numEsercizi;
+    char esercizio[EXERCISE_MAX_SIZE], answer[3];
+    
+    showMyTitle();
+    puts("\t\t\t\t|‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾|");
+    puts("\t\t\t\t|       INSERIMENTO ESERCIZI       |");
+    puts("\t\t\t\t|__________________________________|");
+    printf("\033[44m\033[0m\n");
+    
+    if (!getInteger("QUANTI ESERCIZI VUOI METTERE NELLA SCHEDA?\n>> ", &numEsercizi))
+    {
+        return true;
+    }
+    
+    int posizione = 1;
+    for (int i = 0; i < numEsercizi; i++)
+    {
+        printBoldGreen("INSERISCI L'ESERCIZIO NUMERO ");
+        printf("\033[1;32m%d\033[0m", posizione);
+        printBoldGreen(" DELLA SCHEDA\n>> ");
+        fgets(esercizio, EXERCISE_MAX_SIZE, stdin);
+        esercizio[strcspn(esercizio, "\n")] = '\0';
+        
+        int serie, ripetizioni;
+        while (!getInteger("Inserisci il numero di serie da fare\n>> ", &serie)){}
+        while (!getInteger("Inserisci il numero di ripetizioni da fare\n>> ", &ripetizioni)){}
+
+        if (!insertExercise(Cliente, date, esercizio, &posizione, &serie, &ripetizioni)){
+            printError("ESERCIZIO NON INSERITO CORRETTAMENTE.");
+            i--;
+        }
+        else {
+            posizione++;
+        }
+    }
+    
+    while(1)
+    {
+        getInput("SEI SODDSFATTO DELLA SCHEDA?\nLA CONSIDERI COMPLETATA?\nPER FAVORE RISPONDI CON SI O NO\n>> ", answer, 3);
+        
+        if (strcasecmp(answer, "si\0") == 0)
+        {
+            if(completedRoutine(Cliente, date)){
+                printSuccess("LA SCHEDA E' STATA CREATA CON SUCCESSO");
+                return true;
+            }
+            return false;
+        }else if (strcasecmp(answer, "no\0") == 0){
+            printBoldGreen("SCHEDA FATTA, MA NON COMPLETATA\n\n");
+            return true;
+        }
+        else{
+            printError("RISPOSTA NON ACCETTABILE");
+        }
+    }
+    
+    return true;
+}
+
 
 bool archiviaScheda(User *loggedUser)
 {
@@ -138,7 +204,7 @@ bool archiviaScheda(User *loggedUser)
         if (showAllMyCustomers(loggedUser))
         {
             printBoldGreen("\n\nSELEZIONA IL CLIENTE AL QUALE VUOI ARCHIVIARE LA SCHEDA ATTIVA\n");
-            printBoldGreen(">>");
+            printBoldGreen(">> ");
             fgets(Cliente, CF_MAX_SIZE, stdin);
             len = strlen(Cliente);
             if (len >= 18)
@@ -180,6 +246,7 @@ bool creaNuovaSchedaAttiva(User *loggedUser)
     char Cliente[CF_MAX_SIZE], dataInizioScheda[DATE_SIZE];
     clearScreen();
     showMyTitle();
+    printf("\033[47m\033[30m\033[0m");
     puts("\t\t\t\t|‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾|");
     puts("\t\t\t\t|      CREAZIONE NUOVA SCHEDA      |");
     puts("\t\t\t\t|__________________________________|");
@@ -196,7 +263,7 @@ bool creaNuovaSchedaAttiva(User *loggedUser)
         if (showAllMyCustomers(loggedUser))
         {
             printBoldGreen("\n\nSELEZIONA IL CLIENTE AL QUALE VUOI CREARE UNA NUOVA SCHEDA\n");
-            printBoldGreen(">>");
+            printBoldGreen(">> ");
             fgets(Cliente, CF_MAX_SIZE, stdin);
             len = strlen(Cliente);
             if (len >= 18)
@@ -221,16 +288,14 @@ bool creaNuovaSchedaAttiva(User *loggedUser)
             if (createNewRoutine(loggedUser, Cliente, dataInizioScheda))
             {
                 Date *date = malloc(sizeof(Date));
-                if (date == NULL)
-                {
+                if (date == NULL){
                     printf("Errore: impossibile allocare memoria per la struttura date.\n");
                     exit(EXIT_FAILURE);
                 }
-                if (!convertDateFromDb(date, dataInizioScheda))
-                {
+                if (!convertDateFromDb(date, dataInizioScheda)){
                     return false;
                 }
-                inserisciEsercizi(loggedUser, Cliente, date);
+                inserisciEsercizi(Cliente, date);
                 return true;
             }
             return false;
@@ -242,6 +307,30 @@ bool creaNuovaSchedaAttiva(User *loggedUser)
         }
     }
 }
+
+bool modificaScheda(User *loggedUser){
+    char cliente[CF_MAX_SIZE], dataInit[DATE_SIZE];
+    int maxPosition;
+    if(printAllNotCompletedRoutines(loggedUser)){
+        getInput("\n\nQUALE SCHEDA VUOI MODIFICARE? (PER FAVORE INSERIRE IL CODICE FISCALE)\n>> ", cliente, CF_MAX_SIZE);
+        if(chooseNotCompletedRoutine(cliente, dataInit, &maxPosition)){
+            Date *date = malloc(sizeof(Date));
+            if (date == NULL){
+                printf("Errore: impossibile allocare memoria per la struttura date.\n");
+                exit(EXIT_FAILURE);
+            }
+
+            if (!convertDateFromDb(date, dataInit)){
+                free(date);
+                return false;
+            }
+            inserisciAltriEsercizi(cliente, date, maxPosition);
+        }
+        return true;
+    }
+    return false;
+}
+
 
 void ptController(char *username)
 {
@@ -304,9 +393,9 @@ clean_up:
             }
             break;
         case 3:
-            /*if(!modificaScheda(loggedUser)){
-                failed_attempts ++;
-            }*/
+            if(!modificaScheda(loggedUser)){      //mostra tutte le schede non completate
+                failed_attempts ++;               //scegline una
+            }                                     //modificala
             break;
         case 4:
             if (generaReport(loggedUser))
@@ -324,7 +413,7 @@ clean_up:
                 printf("Errore: impossibile allocare memoria per la struttura Cliente.\n");
                 exit(EXIT_FAILURE);
             }
-            if (!mostraSchedaAttiva(Cliente))
+            if (!mostraSchedaAttivaCliente(loggedUser, Cliente))
             {
                 failed_attempts++;
             }

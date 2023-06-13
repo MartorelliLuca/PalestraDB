@@ -16,7 +16,7 @@ bool displayMissingExercises(workoutCustomer *workUser);
 
 bool registerNewCustomer(User user);
 
-bool createNewGameRoom(char *nomeStanza);
+bool displayRoutine(User *loggedUser, User *cliente);
 
 bool showOldRoutines(User *user, int *num);
 
@@ -28,7 +28,7 @@ bool scegliSchedaArchiviata(User *loggedUser, Date *date);
 
 bool startWorkout(workoutCustomer *workUser);
 
-bool skipTurn(char *username);
+bool completedRoutine(char *Cliente, Date *date);
 
 bool performExercise(workoutCustomer *workUser, char *esercizio);
 
@@ -49,5 +49,9 @@ bool createNewRoutine(User *loggedUser, char *Cliente, char dataInizioScheda[DAT
 bool showAllMyCustomers(User *loggedUser);
 
 bool recoverSessionData(workoutCustomer *workUser);
+
+bool printAllNotCompletedRoutines(User *loggedUser);
+
+bool chooseNotCompletedRoutine(char *cliente, char *data, int *maxPosition);
 
 bool insertExercise(char Cliente[USERNAME_MAX_SIZE], Date *date, char esercizio[EXERCISE_MAX_SIZE], int *i, int *serie, int *ripetizioni);

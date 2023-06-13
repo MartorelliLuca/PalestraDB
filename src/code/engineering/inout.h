@@ -8,9 +8,7 @@
 #include "../model/structs.h"
 #include "../view/viewUtils.h"
 
-void toUpperCase(char *str);
-
-char multiChoice(char* domanda, char choices[], int num);
+bool getDateFromUser(Date *date);
 
 bool getInput(char *requestString, char *resultBuffer, int bufferSize);
 
@@ -19,9 +17,3 @@ bool getInteger(char* domanda, int *integerPtr);
 bool getLoginCredentials(Credentials *creds);
 
 bool getRegCredentials(User *user);
-
-bool getAttackInfo(char *terr1, char *terr2, int *num_carri);
-
-bool getMoveArmyInfo(int *num_carri, char *terr1, char *terr2);
-
-bool getPositionArmyInfo(char *terr, int *num_carri);

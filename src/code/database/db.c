@@ -347,7 +347,7 @@ err1:
 }
 
 
-bool chooseNotCompletedRoutine(char *cliente, char *date, int *maxPosition){
+bool chooseNotCompletedRoutine(char cliente[USERNAME_MAX_SIZE], char date[DATE_SIZE], int *maxPosition){
 	MYSQL_STMT* prepared_stmt;
     MYSQL_BIND param[3];
 
@@ -359,18 +359,18 @@ bool chooseNotCompletedRoutine(char *cliente, char *date, int *maxPosition){
 
     // Prepare parameters
     memset(param, 0, sizeof(param));
-
-    param[0].buffer_type = MYSQL_TYPE_VAR_STRING; // IN
+	
+	param[0].buffer_type = MYSQL_TYPE_VAR_STRING; // IN
     param[0].buffer = cliente;
     param[0].buffer_length = strlen(cliente);
 
 	param[1].buffer_type = MYSQL_TYPE_VAR_STRING; //OUT
 	param[1].buffer = date;
-	param[1].buffer_length = strlen(date);
+	param[1].buffer_length = DATE_SIZE;
 
 	param[2].buffer_type = MYSQL_TYPE_LONG; //OUT
 	param[2].buffer = maxPosition;
-	param[2].buffer_length = sizeof(*maxPosition);
+	param[2].buffer_length = sizeof(maxPosition);
 
     // Binding
     if (mysql_stmt_bind_param(prepared_stmt, param) != 0) {
@@ -388,11 +388,11 @@ bool chooseNotCompletedRoutine(char *cliente, char *date, int *maxPosition){
     memset(param, 0, sizeof(param));
     param[0].buffer_type = MYSQL_TYPE_STRING; // OUT
     param[0].buffer = date;
-	param[0].buffer_length = strlen(date);
+	param[0].buffer_length = DATE_SIZE -1;
 
 	param[1].buffer_type = MYSQL_TYPE_LONG; //OUT
 	param[1].buffer = maxPosition;
-	param[1].buffer_length = sizeof(*maxPosition);
+	param[1].buffer_length = sizeof(maxPosition);
 
 	dump_result_set(conn, prepared_stmt, "");
 	mysql_stmt_next_result(prepared_stmt);

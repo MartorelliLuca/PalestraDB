@@ -99,17 +99,17 @@ bool inserisciAltriEsercizi(char *Cliente, Date *date, int maxPosition){
     
     while(1)
     {
-        getInput("SEI SODDSFATTO DELLA SCHEDA?\nLA CONSIDERI COMPLETATA?\nPER FAVORE RISPONDI CON SI O NO\n>> ", answer, 3);
+        getInput("\n\n\nSEI SODDSFATTO DELLA SCHEDA?\nLA CONSIDERI COMPLETATA?\nPER FAVORE RISPONDI CON SI O NO\n>> ", answer, 3);
         
         if (strcasecmp(answer, "si\0") == 0)
         {
             if(completedRoutine(Cliente, date)){
-                printSuccess("LA SCHEDA E' STATA CREATA CON SUCCESSO");
+                printSuccess("LA SCHEDA E' STATA COMPLETATA CON SUCCESSO");
                 return true;
             }
             return false;
         }else if (strcasecmp(answer, "no\0") == 0){
-            printBoldGreen("SCHEDA FATTA, MA NON COMPLETATA\n\n");
+            printBoldGreen("SCHEDA FATTA, MA NON ANCORA COMPLETATA\n\n");
             return true;
         }
         else{
@@ -314,6 +314,8 @@ bool modificaScheda(User *loggedUser){
     if(printAllNotCompletedRoutines(loggedUser)){
         getInput("\n\nQUALE SCHEDA VUOI MODIFICARE? (PER FAVORE INSERIRE IL CODICE FISCALE)\n>> ", cliente, CF_MAX_SIZE);
         if(chooseNotCompletedRoutine(cliente, dataInit, &maxPosition)){
+            printSuccess("ECCO LA SCHEDA SUA SCHEDA NON COMPLETA");
+            puts("");
             Date *date = malloc(sizeof(Date));
             if (date == NULL){
                 printf("Errore: impossibile allocare memoria per la struttura date.\n");

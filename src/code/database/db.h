@@ -52,6 +52,6 @@ bool recoverSessionData(workoutCustomer *workUser);
 
 bool printAllNotCompletedRoutines(User *loggedUser);
 
-bool chooseNotCompletedRoutine(char *cliente, char *data, int *maxPosition);
+bool chooseNotCompletedRoutine(char cliente[USERNAME_MAX_SIZE], char data[DATE_SIZE], int *maxPosition);
 
 bool insertExercise(char Cliente[USERNAME_MAX_SIZE], Date *date, char esercizio[EXERCISE_MAX_SIZE], int *i, int *serie, int *ripetizioni);

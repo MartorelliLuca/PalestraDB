@@ -9,6 +9,7 @@
 #define EXERCISE_MAX_SIZE 30 + 1
 
 
+
 typedef struct {
     char username[USERNAME_MAX_SIZE] ;
     char password[PASSWORD_MAX_SIZE] ;

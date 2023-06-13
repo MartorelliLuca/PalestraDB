@@ -61,8 +61,8 @@ static bool mostraSchedaAttiva(User *loggedUser)
 bool inserisciEsercizi(User *loggedUser, char *Cliente, Date *date)
 {
     clearScreen();
-    int numEsercizi, i = 0, len, serie, ripetizioni, cancellaX;
-    char esercizio[EXERCISE_MAX_SIZE], *cancella;
+    int numEsercizi, i = 0, len, serie, ripetizioni, cancellaX=0;
+    char esercizio[EXERCISE_MAX_SIZE], *cancella, answer[3];
     while (1)
     {
         showMyTitle();
@@ -76,8 +76,7 @@ bool inserisciEsercizi(User *loggedUser, char *Cliente, Date *date)
             while (i < numEsercizi)
             {
                 printf("Checkpoint1");
-                if (i == 0)
-                {
+                if (i == 0 && cancellaX==0){
                     cancellaX=i+1;
                 }
                 printBoldGreen("INSERISCI L'ESERCIZIO NUMERO ");
@@ -86,24 +85,33 @@ bool inserisciEsercizi(User *loggedUser, char *Cliente, Date *date)
                 fgets(esercizio, EXERCISE_MAX_SIZE, stdin);
                 len = strlen(esercizio);
                 esercizio[len - 1] = '\0';
-                while (!getInteger("Inserisci il numero di serie da fare\n>>", &serie))
-                {
-                }
-                while (!getInteger("Inserisci il numero di ripetizioni da fare\n>>", &ripetizioni))
-                {}
+                while (!getInteger("Inserisci il numero di serie da fare\n>>", &serie)){}
+                while (!getInteger("Inserisci il numero di ripetizioni da fare\n>>", &ripetizioni)){}
                 printf("serie:%d, ripetizioni:%d, posizione:%d", serie, ripetizioni, cancellaX);
-                if (insertExercise(Cliente, date, esercizio, &cancellaX, &serie, &ripetizioni))
-                {
-                    i++;
-                    cancellaX++;
+                if (!insertExercise(Cliente, date, esercizio, &cancellaX, &serie, &ripetizioni)){
+                    printError("ESERCIZIO NON INSERITO CORRETTAMENTE.");
+                    continue;
                 }
-                printError("ESERCIZIO NON INSERITO CORRETTAMENTE.\n");
+                i++;
+                cancellaX++;
             }
-            printSuccess("USCITO DAL WHILE DEGLI ESERCIZI ORA HAI UNA FGETS\n");
-            fgets(cancella, 10, stdin);
+            while(1){
+                printSuccess("USCITO DAL WHILE DEGLI ESERCIZI ORA HAI UNA FGETS\n");
+                fgets(cancella, 10, stdin);
+                getInput("SEI SODDSFATTO DELLA SCHEDA?\nLA CONSIDERI COMPLETATA?\nPER FAVORE RISPONDI CON SI O NO\n>>", answer, 3);
+                if (strcasecmp(answer, "si") == 0) {
+                    // Le stringhe sono uguali, esegui il codice qui
+                    break;
+                } else if(strcasecmp(answer, "no") == 0){
+                    //
+                    break;
+                } else{
+                    printError("RISPOSTA NON ACCETTABILE");
+                    continue;
+                }
+            }
             // continua con il ciclo chiedendo se gli va bene di rendere la scheda completata
         }
-        printBoldGreen("STAI PIU' ATTENTO\n\n");
     }
     return true;
 }

@@ -680,7 +680,7 @@ bool insertExercise(char Cliente[USERNAME_MAX_SIZE], Date *date, char esercizio[
         goto err;
     }
 	
-
+	mysql_stmt_next_result(prepared_stmt);
     mysql_stmt_close(prepared_stmt);
     return true;
 

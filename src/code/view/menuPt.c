@@ -26,3 +26,27 @@ int promptMenuPt(){
     }
     return input;
 }
+
+
+bool convertDateFromDb(Date *datePtr, char *dateString) {
+    char *cancella;
+    char *yearString = strtok(dateString, "-") ;
+    printf("GIORNO: %s\n", yearString);
+    char *monthString = strtok(NULL, "-") ;
+    printf("MESE: %s\n", monthString);
+    char *dayString = strtok(NULL, "-") ;
+    printf("GIORNO: %s\n", dayString);
+    printf("%s", dateString);
+    fflush(stdout);
+    sleep(5);
+    if (strlen(yearString) == 4 && strlen(monthString) == 2 && strlen(dayString) == 2) {
+        datePtr->year = atoi(yearString) ;
+        datePtr->month = atoi(monthString) ;
+        datePtr->day = atoi(dayString) ;
+        fgets(cancella, 10, stdin);
+        return true ;
+    }
+    return false ;
+
+    return true ;
+}

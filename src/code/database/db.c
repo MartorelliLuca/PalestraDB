@@ -394,8 +394,6 @@ err:
     mysql_stmt_close(prepared_stmt);
 err1:
     return false;
-
-
 }
 
 bool startWorkout(workoutCustomer *workUser){
@@ -606,7 +604,7 @@ bool recoverSessionData(workoutCustomer *workUser){
 		print_stmt_error(prepared_stmt, "Could not buffer result in procedure: recupera_dati_sessione");
 		goto err;
 	}
-	
+
 	dump_result_set(conn, prepared_stmt, "");
 	mysql_stmt_next_result(prepared_stmt);
     
@@ -618,64 +616,78 @@ err1:
 	return false;
 }
 
-bool recoverSession(User *loggedUser, int *yesOrNo){
+
+bool insertExercise(char Cliente[USERNAME_MAX_SIZE], Date *date, char esercizio[EXERCISE_MAX_SIZE], int *posizione, int *serie, int *ripetizioni){
 	MYSQL_STMT* prepared_stmt;
-	MYSQL_BIND param[2];
-
+    MYSQL_BIND param[6];
+	printf("CHECKPOINT1");
+	fflush(stdout);
 	// Prepare stored procedure call
-	if (!setup_prepared_stmt(&prepared_stmt, "call riprendi_sessione(?, ?)", conn)) {
-		finish_with_stmt_error(conn, prepared_stmt, "Unable to initialize prepared statement for procedure: riprendi_sessione", false);
-		goto err1;
-	}
-
+    if (!setup_prepared_stmt(&prepared_stmt, "call inserisci_esercizio(?, ?, ?, ?, ?, ?)", conn)) {
+        finish_with_stmt_error(conn, prepared_stmt, "Unable to initialize prepared statement for procedure: inserisci_esercizio", false);
+        goto err1;
+    }
+	printf("CHECKPOINT2");
+	fflush(stdout);
 	// Prepare parameters
-	memset(param, 0, sizeof(param));
+    memset(param, 0, sizeof(param));
 
-	param[0].buffer_type = MYSQL_TYPE_VAR_STRING; // IN
-	param[0].buffer = loggedUser->cf;
-	param[0].buffer_length = strlen(loggedUser->cf);
+	printf("ESERCIZIO: %s\n", esercizio);
 
-	param[1].buffer_type = MYSQL_TYPE_LONG; // OUT
-	param[1].buffer = yesOrNo;
-	param[1].buffer_length = sizeof(yesOrNo);
+	bool is_null = true ;
+
+    param[0].buffer_type = MYSQL_TYPE_STRING; 	//IN
+    param[0].buffer = Cliente;
+    param[0].buffer_length = strlen(Cliente);
+
+	param[1].buffer_type = MYSQL_TYPE_STRING; 	//IN
+    param[1].buffer = esercizio;
+    param[1].buffer_length = strlen(esercizio);
+
+	param[2].buffer_type = MYSQL_TYPE_LONG; 		//IN
+    param[2].buffer = ripetizioni;
+    param[2].buffer_length = sizeof(ripetizioni);
 	
+	param[3].buffer_type = MYSQL_TYPE_LONG; 		//IN
+    param[3].buffer = serie;
+    param[3].buffer_length = sizeof(serie);
+
+	param[4].buffer_type = MYSQL_TYPE_LONG; 		//IN
+    param[4].buffer = posizione;
+    param[4].buffer_length = sizeof(posizione);
+	
+	MYSQL_TIME mysqlDate;
+    prepareDateParam(date, &mysqlDate);
+
+	param[5].buffer_type = MYSQL_TYPE_DATE; 		//IN
+	param[5].buffer = &mysqlDate;
+	param[5].buffer_length = sizeof(MYSQL_TIME);
 
 	// Binding
-	if (mysql_stmt_bind_param(prepared_stmt, param) != 0) {
-		finish_with_stmt_error(conn, prepared_stmt, "Could not bind parameters in procedure: riprendi_sessione", true);
-		goto err;
-	}
+    if (mysql_stmt_bind_param(prepared_stmt, param) != 0) {
+        finish_with_stmt_error(conn, prepared_stmt, "Could not bind parameters in procedure: inserisci_esercizio", true);
+        goto err;
+    }
+	printf("CHECKPOINT4");
+	fflush(stdout);
+    
+    // Execution
+    if (mysql_stmt_execute(prepared_stmt) != 0) {
+        printf("CHECKPOINT5");
+		fflush(stdout);
+	
+		print_stmt_error(prepared_stmt, "Error in execution for procedure: inserisci_esercizio");
+        goto err;
+    }
+	
 
-	// Execution
-	if (mysql_stmt_execute(prepared_stmt) != 0) {
-		print_stmt_error(prepared_stmt, "Error in execution for procedure: riprendi_sessione");
-		goto err;
-	}
+    mysql_stmt_close(prepared_stmt);
+    return true;
 
-	// Prepare output params
-	memset(param, 0, sizeof(param));
-	param[0].buffer_type = MYSQL_TYPE_LONG; // OUT
-	param[0].buffer = yesOrNo;
-	param[0].buffer_length = sizeof(yesOrNo);
-
-	// Binding res
-	if (mysql_stmt_bind_result(prepared_stmt,param)){
-		print_stmt_error(prepared_stmt, "Could not retrieve output in procedure: riprendi_sessione");
-		goto err;
-	}
-
-	// Retrieve output parameter
-	if (mysql_stmt_fetch(prepared_stmt)){
-		print_stmt_error(prepared_stmt, "Could not buffer result in procedure: riprendi_sessione");
-		goto err;
-	}
-
-	mysql_stmt_close(prepared_stmt);
-	return true;
 err:
-	mysql_stmt_close(prepared_stmt);
+    mysql_stmt_close(prepared_stmt);
 err1:
-	return false;
+    return false;
 }
 
 bool retrieveReport(User *loggedUser,Date *date1, Date *date2){

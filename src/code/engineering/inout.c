@@ -139,7 +139,6 @@ bool getInteger(char* domanda, int *integerPtr) {
     } ;
     if (longInput > INT_MAX || longInput < INT_MIN) return false ;
     *integerPtr = (int) longInput ;
-    
     return true ;
 }
 

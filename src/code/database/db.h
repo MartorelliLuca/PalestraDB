@@ -38,8 +38,6 @@ bool getPtCf(User *loggedUser);
 
 bool addSetToExercise(workoutCustomer *workUser, char *esercizio, int *numeroSerie);
 
-bool moveArmyBetweenTerritories(char *username, int *num_carri, char *terr1, char *terr2);
-
 bool displayMissingSets(workoutCustomer *workUser, char *esercizio);
 
 bool getCustomerCf(User *loggedUser);
@@ -50,6 +48,6 @@ bool createNewRoutine(User *loggedUser, char *Cliente, char dataInizioScheda[DAT
 
 bool showAllMyCustomers(User *loggedUser);
 
-bool recoverSession(User *loggedUser, int *yesOrNo);
-
 bool recoverSessionData(workoutCustomer *workUser);
+
+bool insertExercise(char Cliente[USERNAME_MAX_SIZE], Date *date, char esercizio[EXERCISE_MAX_SIZE], int *i, int *serie, int *ripetizioni);

@@ -5,3 +5,4 @@
 #include "../view/menuPt.h"
 
 void ptController(char* username);
+bool convertDateFromDb(Date *date, char *dataInizioScheda);

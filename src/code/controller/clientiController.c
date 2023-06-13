@@ -1,7 +1,5 @@
 #include "clientiController.h"
 
-#define EXERCISE_MAX_SIZE 31
-
 
 
 //[3] MOSTRA SCHEDE ARCHIVIATE
@@ -144,12 +142,12 @@ clean_up:
             }
             break;
         case 3:
-            if(!displayMissingExercises(workUser)){                         //visualizza Esercizi Mancanti
+            if(!displayMissingExercises(workUser)){
                 failed_attempts ++;
             }
             break;
         case 4:
-            if(!endWorkout(workUser)){                                      //GUARDA LEAVE MATCH
+            if(!endWorkout(workUser)){
                 printf("SESSIONE NON TERMINATA.\n");
                 break;
             }
@@ -250,31 +248,24 @@ clean_up:
             }
             break;
         case 4:
-            if(recoverSession(loggedUser, &yesOrNo)){
-                if(yesOrNo){
-                    workoutCustomer* workUser = malloc(sizeof(workoutCustomer));
-                    if (workUser == NULL) {
-                        printf("Errore: impossibile allocare memoria per la struttura workUser.\n");
-                        exit(EXIT_FAILURE);
-                    }
-                    strcpy(workUser->cf, loggedUser->cf);
-                    if(recoverSessionData(workUser)){
-                        if(sessioneIniziata(workUser, loggedUser)){
-                            free(workUser);
-                            printSuccess("SESSIONE TERMINATA CON SUCCESSO\n");
-                            break;
-                        }
-                        printError("SESSIONE TERMINATA CON ERRORI.\n");
-                        break;
-                    }
-                    printError("I DATI DELLA SESSIONE NON SONO STATI RECUPERATI CORRETTAMENTE\n");
+            workoutCustomer* workUser = malloc(sizeof(workoutCustomer));
+            if (workUser == NULL) {
+                printf("Errore: impossibile allocare memoria per la struttura workUser.\n");
+                exit(EXIT_FAILURE);
+            }
+            strcpy(workUser->cf, loggedUser->cf);
+            if(recoverSessionData(workUser)){
+                if(sessioneIniziata(workUser, loggedUser)){
+                    free(workUser);
+                    printSuccess("SESSIONE TERMINATA CON SUCCESSO\n");
                     break;
                 }
-                printError("IMPOSSIBILE RECUPERARE LA SESSIONE DI ALLENAMENTO:");
-                printError("SI POSSONO RECUPERARE SOLO SESSIONI INIZIATE MA NON FINITE");
+                printError("SESSIONE TERMINATA CON ERRORI.\n");
+                free(workUser);
                 break;
             }
             failed_attempts++;
+            free(workUser);
             break;
         case 5:
             free(loggedUser);

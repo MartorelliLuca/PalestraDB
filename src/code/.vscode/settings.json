@@ -5,6 +5,7 @@
         "dbutils.h": "c",
         "menuclienti.h": "c",
         "ptcontroller.h": "c",
-        "logincontroller.h": "c"
+        "logincontroller.h": "c",
+        "structs.h": "c"
     }
 }

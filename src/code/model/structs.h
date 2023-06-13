@@ -6,6 +6,7 @@
 #define PASSWORD_MAX_SIZE 45 + 1
 #define TIME_SIZE 9 + 1
 #define DATE_SIZE 11 + 1
+#define EXERCISE_MAX_SIZE 30 + 1
 
 
 typedef struct {

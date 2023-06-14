@@ -860,6 +860,72 @@ err1:
 	return false;
 }
 
+bool displayAllExercises(){
+	MYSQL_STMT* prepared_stmt;
+
+    // Prepare stored procedure call
+    if (!setup_prepared_stmt(&prepared_stmt, "call visualizza_esercizi()", conn)) {
+        finish_with_stmt_error(conn, prepared_stmt, "Unable to initialize prepared statement for procedure: visualizza_esercizi", false);
+        goto err1;
+    }
+
+    // Execution
+    if (mysql_stmt_execute(prepared_stmt) != 0) {
+        print_stmt_error(prepared_stmt, "Error in execution for procedure: visualizza_esercizi");
+        goto err;
+    }
+
+    // Fetch and print the results
+	dump_result_set(conn, prepared_stmt, "\n\nECCO TUTTI GLI ESERCIZI");
+	mysql_stmt_next_result(prepared_stmt);
+    mysql_stmt_close(prepared_stmt);
+    return true;
+err:
+    mysql_stmt_close(prepared_stmt);
+err1:
+    return false;
+
+}
+
+bool addGymExercise(char esercizio[EXERCISE_MAX_SIZE]){
+	MYSQL_STMT* prepared_stmt;
+    MYSQL_BIND param[1];
+
+    // Prepare stored procedure call
+    if (!setup_prepared_stmt(&prepared_stmt, "call aggiungi_esercizio_in_palestra(?)", conn)) {
+        finish_with_stmt_error(conn, prepared_stmt, "Unable to initialize prepared statement for procedure: aggiungi_esercizio_in_palestra", false);
+        goto err1;
+    }
+
+    // Prepare parameters
+    memset(param, 0, sizeof(param));
+
+    param[0].buffer_type = MYSQL_TYPE_VAR_STRING; // IN
+    param[0].buffer = esercizio;
+    param[0].buffer_length = strlen(esercizio);
+
+    // Binding
+    if (mysql_stmt_bind_param(prepared_stmt, param) != 0) {
+        finish_with_stmt_error(conn, prepared_stmt, "Could not bind parameters in procedure: aggiungi_esercizio_in_palestra", true);
+        goto err;
+    }
+
+    // Execution
+    if (mysql_stmt_execute(prepared_stmt) != 0) {
+        print_stmt_error(prepared_stmt, "Error in execution for procedure: aggiungi_esercizio_in_palestra");
+        goto err;
+    }
+
+    // Fetch and print the results
+	mysql_stmt_next_result(prepared_stmt);
+    mysql_stmt_close(prepared_stmt);
+    return true;
+err:
+    mysql_stmt_close(prepared_stmt);
+err1:
+    return false;
+
+}
 
 bool printAllNotCompletedRoutines(User *loggedUser){
 	MYSQL_STMT* prepared_stmt;

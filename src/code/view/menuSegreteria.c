@@ -8,8 +8,12 @@ int promptMenuSegreteria(){
     printBoldGreen("[2] ");
     printf("AGGIUNGI NUOVO PERSONAL TRAINER\n");
     printBoldGreen("[3] ");
-    printf("TORNA AL MENU PRINCIPALE\n");
+    printf("AGGIUNGI ESERCIZIO\n");
     printBoldGreen("[4] ");
+    printf("MOSTRA TUTTI GLI ESERCIZI DELLA PALESTRA\n");
+    printBoldGreen("[5] ");
+    printf("TORNA AL MENU PRINCIPALE\n");
+    printBoldGreen("[6] ");
     printf("CLEAN SCREEN\n");
     printBoldGreen(">> ");
     if(!getInteger("", &input)){

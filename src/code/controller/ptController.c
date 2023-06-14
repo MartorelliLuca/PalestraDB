@@ -166,7 +166,7 @@ bool inserisciEsercizi(char *Cliente, Date *date){
     
     while(1)
     {
-        getInput("SEI SODDSFATTO DELLA SCHEDA?\nLA CONSIDERI COMPLETATA?\nPER FAVORE RISPONDI CON SI O NO\n>> ", answer, 3);
+        getInput("\n\nSEI SODDSFATTO DELLA SCHEDA?\nLA CONSIDERI COMPLETATA?\nPER FAVORE RISPONDI CON SI O NO\n>> ", answer, 3);
         
         if (strcasecmp(answer, "si\0") == 0)
         {
@@ -176,21 +176,19 @@ bool inserisciEsercizi(char *Cliente, Date *date){
             }
             return false;
         }else if (strcasecmp(answer, "no\0") == 0){
-            printBoldGreen("SCHEDA FATTA, MA NON COMPLETATA\n\n");
+            printSuccess("SCHEDA FATTA, MA NON COMPLETATA\n\n");
             return true;
         }
         else{
             printError("RISPOSTA NON ACCETTABILE");
         }
     }
-    
-    return true;
 }
 
 
 bool archiviaScheda(User *loggedUser)
 {
-    int len, failed_attempts = 0;
+    int len;
     char Cliente[CF_MAX_SIZE];
     clearScreen();
     showMyTitle();
@@ -198,57 +196,33 @@ bool archiviaScheda(User *loggedUser)
     puts("\t\t\t\t|       ARCHIVIAZIONE SCHEDA       |");
     puts("\t\t\t\t|__________________________________|");
     printf("\033[44m\033[0m\n");
-    while (true)
+    puts("");
+    puts("");
+    if (showAllMyCustomers(loggedUser))
     {
-        puts("");
-        puts("");
-        if (failed_attempts == 5)
-        {
-            printError("\t Ripristino menu dopo troppi tentativi errati\n\t Stai più attento!");
-            return false;
+        printBoldGreen("\n\nSELEZIONA IL CLIENTE AL QUALE VUOI ARCHIVIARE LA SCHEDA ATTIVA\n");
+        printBoldGreen(">> ");
+        fgets(Cliente, CF_MAX_SIZE, stdin);
+        len = strlen(Cliente);
+        if (len == CF_MAX_SIZE-1){
+            while (getchar() != '\n'){}
         }
-        if (showAllMyCustomers(loggedUser))
-        {
-            printBoldGreen("\n\nSELEZIONA IL CLIENTE AL QUALE VUOI ARCHIVIARE LA SCHEDA ATTIVA\n");
-            printBoldGreen(">> ");
-            fgets(Cliente, CF_MAX_SIZE, stdin);
-            len = strlen(Cliente);
-            if (len >= 18)
-            {
-                while (getchar() != '\n')
-                {
-                }
-                printError("TROPPI CARATTERI INSERITI: UN CODICE FISCALE HA ESATTAMENTE 16 CARATTERI\n\n");
-                failed_attempts++;
-                continue;
-            }
-            if (len <= 16)
-            {
-                printError("POCHI CARATTERI INSERITI: UN CODICE FISCALE HA ESATTAMENTE 16 CARATTERI\n\n");
-                failed_attempts++;
-                continue;
-            }
-            if (Cliente[len - 1] == '\n')
-            {
-                Cliente[len - 1] = '\0';
-            }
-            if (archiveRoutine(loggedUser, Cliente))
-            {
-                return true;
-            }
-            return false;
+        if (Cliente[len - 1] == '\n'){
+            Cliente[len - 1] = '\0';
         }
-        else
-        {
-            printError("ERRORE IN APERTURA LISTA CLIENTI");
-            return false;
+        if (archiveRoutine(loggedUser, Cliente)){
+            return true;
         }
+        return false;
+    }else{
+        printError("ERRORE IN APERTURA LISTA CLIENTI");
+        return false;
     }
 }
 
 bool creaNuovaSchedaAttiva(User *loggedUser)
 {
-    int len, failed_attempts = 0;
+    int len;
     char Cliente[CF_MAX_SIZE], dataInizioScheda[DATE_SIZE];
     clearScreen();
     showMyTitle();
@@ -257,65 +231,40 @@ bool creaNuovaSchedaAttiva(User *loggedUser)
     puts("\t\t\t\t|      CREAZIONE NUOVA SCHEDA      |");
     puts("\t\t\t\t|__________________________________|");
 
-    while (true)
-    {
-        puts("");
-        puts("");
-        if (failed_attempts == 5)
-        {
-            printError("\t Ripristino menu dopo troppi tentativi errati\n\t Stai più attento!");
-            return false;
+    puts("");
+    puts("");
+    if (showAllMyCustomers(loggedUser)){
+        printBoldGreen("\n\nSELEZIONA IL CLIENTE AL QUALE VUOI CREARE UNA NUOVA SCHEDA\n");
+        printBoldGreen(">> ");
+        fgets(Cliente, CF_MAX_SIZE, stdin);
+        len = strlen(Cliente);
+        if (len == CF_MAX_SIZE-1){
+            while (getchar() != '\n'){}
         }
-        if (showAllMyCustomers(loggedUser))
-        {
-            printBoldGreen("\n\nSELEZIONA IL CLIENTE AL QUALE VUOI CREARE UNA NUOVA SCHEDA\n");
-            printBoldGreen(">> ");
-            fgets(Cliente, CF_MAX_SIZE, stdin);
-            len = strlen(Cliente);
-            if (len >= 18)
-            {
-                while (getchar() != '\n')
-                {
-                }
-                printError("TROPPI CARATTERI INSERITI: UN CODICE FISCALE HA ESATTAMENTE 16 CARATTERI\n\n");
-                failed_attempts++;
-                continue;
+        if (Cliente[len - 1] == '\n'){
+            Cliente[len - 1] = '\0';
+        }
+        if (createNewRoutine(loggedUser, Cliente, dataInizioScheda)){
+            Date *date = malloc(sizeof(Date));
+            if (date == NULL){
+                printf("Errore: impossibile allocare memoria per la struttura date.\n");
+                exit(EXIT_FAILURE);
             }
-            if (len <= 16)
-            {
-                printError("POCHI CARATTERI INSERITI: UN CODICE FISCALE HA ESATTAMENTE 16 CARATTERI\n\n");
-                failed_attempts++;
-                continue;
-            }
-            if (Cliente[len - 1] == '\n')
-            {
-                Cliente[len - 1] = '\0';
-            }
-            if (createNewRoutine(loggedUser, Cliente, dataInizioScheda))
-            {
-                Date *date = malloc(sizeof(Date));
-                if (date == NULL){
-                    printf("Errore: impossibile allocare memoria per la struttura date.\n");
-                    exit(EXIT_FAILURE);
-                }
-                if (!convertDateFromDb(date, dataInizioScheda)){
-                    free(date);
-                    return false;
-                }
-                if(inserisciEsercizi(Cliente, date)){
-                    free(date);
-                    return true;
-                }
+            if (!convertDateFromDb(date, dataInizioScheda)){
                 free(date);
                 return false;
             }
+            if(inserisciEsercizi(Cliente, date)){
+                free(date);
+                return true;
+            }
+            free(date);
             return false;
         }
-        else
-        {
-            printError("ERRORE IN APERTURA LISTA CLIENTI");
-            return false;
-        }
+        return false;
+    }else{
+        printError("ERRORE IN APERTURA LISTA CLIENTI");
+        return false;
     }
 }
 

@@ -50,6 +50,10 @@ bool showAllMyCustomers(User *loggedUser);
 
 bool recoverSessionData(workoutCustomer *workUser);
 
+bool addGymExercise(char esercizio[EXERCISE_MAX_SIZE]);
+
+bool displayAllExercises();
+
 bool printAllNotCompletedRoutines(User *loggedUser);
 
 bool chooseNotCompletedRoutine(char cliente[USERNAME_MAX_SIZE], char data[DATE_SIZE], int *maxPosition);

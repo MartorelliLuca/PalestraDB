@@ -51,6 +51,40 @@ static bool registraNuovoPT(){
     } while (true) ;
 }
 
+bool aggiungiEsercizio(){
+    char esercizio[EXERCISE_MAX_SIZE], answer[3];
+    clearScreen();
+    showMyTitle();
+    puts("\t\t\t\t|‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾|");
+	puts("\t\t\t\t|        AGGIUNTA  ESERCIZI        |");
+    puts("\t\t\t\t|__________________________________|\n");
+        
+    if(!getInput("\n\nCOME SI CHIAMA L'ESERCIZIO CHE VUOI AGGIUNGERE?\n>> ", esercizio, EXERCISE_MAX_SIZE)){
+        printError("Errore nella getInput");
+        return false;
+    }
+    while(1)
+    {
+        printf("\033[1;32m\n\nSTAI PER AGGIUNGERE L'ESERCIZIO %s\033[0m", esercizio); 
+        getInput("\nSEI SICURO DI VOLER AGGIUNGERE QUESTO ESERCIZIO?\n>> ", answer, 3);
+        
+        if (strcasecmp(answer, "si\0") == 0){
+            if(addGymExercise(esercizio)){
+                printSuccess("ESERCIZIO AGGIUNTO CON SUCCESSO");
+                return true;
+            }
+            return false;
+        }else if (strcasecmp(answer, "no\0") == 0){
+            printSuccess("ESERCIZIO NON AGGIUNTO");
+            return true;
+        }
+        else{
+            printError("RISPOSTA NON ACCETTABILE");
+        }
+    }
+    return true;
+    return false;
+}
 
 
 void segreteriaController(char *username){
@@ -88,9 +122,19 @@ clean_up:
             }
             break;
         case 3:
-            return;
+            if(!aggiungiEsercizio()){
+                failed_attempts ++;
+            }
+            break;
         case 4:
-            goto clean_up;
+            if(!displayAllExercises()){
+                failed_attempts ++;
+            }
+            break;
+        case 5:
+            return;
+        case 6:
+                goto clean_up;
         default:
             printError("Scegli tra le opzioni proposte!");
             failed_attempts ++;

@@ -78,6 +78,9 @@ bool inserisciAltriEsercizi(char *Cliente, Date *date, int maxPosition){
     maxPosition++;
     for (int i = 0; i < numEsercizi; i++)
     {
+          //prettamente estetico
+        puts("");
+        puts("");
         printBoldGreen("INSERISCI L'ESERCIZIO NUMERO ");
         printf("\033[1;32m%d\033[0m", maxPosition);
         printBoldGreen(" DELLA SCHEDA\n>> ");
@@ -109,7 +112,7 @@ bool inserisciAltriEsercizi(char *Cliente, Date *date, int maxPosition){
             }
             return false;
         }else if (strcasecmp(answer, "no\0") == 0){
-            printBoldGreen("SCHEDA FATTA, MA NON ANCORA COMPLETATA\n\n");
+            printSuccess("SCHEDA FATTA, MA NON ANCORA COMPLETATA\n\n");
             return true;
         }
         else{
@@ -138,7 +141,10 @@ bool inserisciEsercizi(char *Cliente, Date *date){
     
     int posizione = 1;
     for (int i = 0; i < numEsercizi; i++)
-    {
+    {          
+        //prettamente estetico
+        puts("");
+        puts("");
         printBoldGreen("INSERISCI L'ESERCIZIO NUMERO ");
         printf("\033[1;32m%d\033[0m", posizione);
         printBoldGreen(" DELLA SCHEDA\n>> ");
@@ -293,10 +299,15 @@ bool creaNuovaSchedaAttiva(User *loggedUser)
                     exit(EXIT_FAILURE);
                 }
                 if (!convertDateFromDb(date, dataInizioScheda)){
+                    free(date);
                     return false;
                 }
-                inserisciEsercizi(Cliente, date);
-                return true;
+                if(inserisciEsercizi(Cliente, date)){
+                    free(date);
+                    return true;
+                }
+                free(date);
+                return false;
             }
             return false;
         }
@@ -321,14 +332,18 @@ bool modificaScheda(User *loggedUser){
                 printf("Errore: impossibile allocare memoria per la struttura date.\n");
                 exit(EXIT_FAILURE);
             }
-
             if (!convertDateFromDb(date, dataInit)){
                 free(date);
                 return false;
             }
-            inserisciAltriEsercizi(cliente, date, maxPosition);
+            if(inserisciAltriEsercizi(cliente, date, maxPosition)){
+                free(date);
+                return true;
+            }
+            free(date);
+            return false;
         }
-        return true;
+        return false;
     }
     return false;
 }
@@ -348,16 +363,14 @@ clean_up:
     int failed_attempts = 0;
 
     User *loggedUser = malloc(sizeof(User));
-    if (loggedUser == NULL)
-    {
+    if (loggedUser == NULL){
         printError("Errore: impossibile allocare memoria per la struttura loggedUser.\n");
         exit(EXIT_FAILURE);
     }
     strcpy(loggedUser->username, username);
-    if (!getPtCf(loggedUser))
-    {
+    if (!getPtCf(loggedUser)){
         printError("Codice Fiscale non preso.\n");
-        return;
+        exit(EXIT_FAILURE);
     }
     puts("");
     puts("");
@@ -366,15 +379,12 @@ clean_up:
     printf("\033[47m\033[30mCODICE FISCALE: %s\033[0m", loggedUser->cf);
     puts("");
     puts("");
-    while (true)
-    {
-        if (prev_error)
-        {
+    while (true){
+        if (prev_error){
             printError("\t Ripristino menu dopo troppi tentativi errati\n\t Stai più attento!");
             prev_error = false;
         }
-        if (failed_attempts == 5)
-        {
+        if (failed_attempts == 5){
             prev_error = true;
             goto clean_up;
         }
@@ -382,15 +392,13 @@ clean_up:
         switch (input)
         {
         case 1:
-            if (!archiviaScheda(loggedUser))
-            {
+            if (!archiviaScheda(loggedUser)){
                 failed_attempts++;
                 break;
             }
             goto clean_up;
         case 2:
-            if (!creaNuovaSchedaAttiva(loggedUser))
-            {
+            if (!creaNuovaSchedaAttiva(loggedUser)){
                 failed_attempts++;
             }
             break;
@@ -400,8 +408,7 @@ clean_up:
             }                                     //modificala
             break;
         case 4:
-            if (generaReport(loggedUser))
-            {
+            if (generaReport(loggedUser)){
                 printSuccess("REPORT STAMPATO CON SUCCESSO.");
                 puts("");
                 break;
@@ -410,13 +417,11 @@ clean_up:
             break;
         case 5:
             User *Cliente = malloc(sizeof(User));
-            if (Cliente == NULL)
-            {
+            if (Cliente == NULL){
                 printf("Errore: impossibile allocare memoria per la struttura Cliente.\n");
                 exit(EXIT_FAILURE);
             }
-            if (!mostraSchedaAttivaCliente(loggedUser, Cliente))
-            {
+            if (!mostraSchedaAttivaCliente(loggedUser, Cliente)){
                 failed_attempts++;
             }
             free(Cliente);

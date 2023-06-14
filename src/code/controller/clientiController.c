@@ -208,7 +208,7 @@ clean_up:
     strcpy(loggedUser->username, username);
     if(!getCustomerCf(loggedUser)){
         printf("Codice Fiscale non preso.");
-        return;
+        exit(EXIT_FAILURE);
     }
     while(true)
     {

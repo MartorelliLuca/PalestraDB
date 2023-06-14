@@ -42,4 +42,5 @@ void showMyTitle() {
     puts("                                   ⣿⣤⣤⣴⣾⣯⣤⣤⣤⣤⣴⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿");
     puts("                                   By Luca Martorelli [m:0281213]");
     puts("");
+    printf("\033[47m\033[30m\033[0m");
 }

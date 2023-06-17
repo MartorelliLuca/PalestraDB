@@ -112,7 +112,7 @@ bool inserisciAltriEsercizi(char *Cliente, Date *date, int maxPosition){
             }
             return false;
         }else if (strcasecmp(answer, "no\0") == 0){
-            printSuccess("SCHEDA FATTA, MA NON ANCORA COMPLETATA\n\n");
+            printSuccess("SCHEDA FATTA, MA NON ANCORA COMPLETATA");
             return true;
         }
         else{
@@ -176,7 +176,7 @@ bool inserisciEsercizi(char *Cliente, Date *date){
             }
             return false;
         }else if (strcasecmp(answer, "no\0") == 0){
-            printSuccess("SCHEDA FATTA, MA NON COMPLETATA\n\n");
+            printSuccess("SCHEDA FATTA, MA NON COMPLETATA");
             return true;
         }
         else{

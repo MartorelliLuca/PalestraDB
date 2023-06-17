@@ -45,7 +45,7 @@ int promptMenuSessione(){
 
 bool getUserInput(char *resultBuffer, int bufferSize) {
 
-    printBoldGreen("Inserire Data Assenza [yyyy-mm-dd]\n>>> ") ;
+    printBoldGreen("Inserire Data [yyyy-mm-dd]\n>>> ") ;
 
     //Alloco un buffer di dimensione pari alla massima dimensione valida per l'input più uno per lo \n
     char inputBuffer[bufferSize + 1] ;

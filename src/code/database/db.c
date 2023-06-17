@@ -34,7 +34,6 @@ bool archiveRoutine(User *loggedUser, char *cf){
 		goto err;
 	}
 	
-	mysql_stmt_next_result(prepared_stmt);
 	mysql_stmt_close(prepared_stmt);
 	return true;
 err:
@@ -130,8 +129,6 @@ bool addSetToExercise(workoutCustomer *workUser, char *esercizio, int *numeroSer
 		goto err;
 	}
 
-	dump_result_set(conn, prepared_stmt, "\n");
-	mysql_stmt_next_result(prepared_stmt);
 	mysql_stmt_close(prepared_stmt);
 	return true;
 err:
@@ -221,7 +218,6 @@ bool displayNewRoutine(User *loggedUser){
     // Fetch and print the results
 	dump_result_set(conn, prepared_stmt, "");
 	mysql_stmt_next_result(prepared_stmt);
-
     mysql_stmt_close(prepared_stmt);
     return true;
 err:
@@ -408,9 +404,6 @@ bool chooseNotCompletedRoutine(char cliente[USERNAME_MAX_SIZE], char date[DATE_S
 		goto err;
 	}
 
-    // Fetch and print the results
-	mysql_stmt_next_result(prepared_stmt);
-
     mysql_stmt_close(prepared_stmt);
     return true;
 
@@ -461,7 +454,6 @@ bool scegliSchedaArchiviata(User *loggedUser, Date *data){
     // Fetch and print the results
 	dump_result_set(conn, prepared_stmt, "");
 	mysql_stmt_next_result(prepared_stmt);
-
     mysql_stmt_close(prepared_stmt);
     return true;
 
@@ -539,8 +531,7 @@ bool startWorkout(workoutCustomer *workUser){
 		print_stmt_error(prepared_stmt, "Could not buffer result in procedure: inizia_sessione");
 		goto err;
 	}
-	dump_result_set(conn, prepared_stmt, "");
-	mysql_stmt_next_result(prepared_stmt);
+	
 	mysql_stmt_close(prepared_stmt);
 	return true;
 err:
@@ -680,9 +671,6 @@ bool recoverSessionData(workoutCustomer *workUser){
 		goto err;
 	}
 
-	dump_result_set(conn, prepared_stmt, "");
-	mysql_stmt_next_result(prepared_stmt);
-    
 	mysql_stmt_close(prepared_stmt);
 	return true;
 err:
@@ -727,9 +715,6 @@ bool completedRoutine(char *Cliente, Date *date){
 		goto err;
 	}
 
-	dump_result_set(conn, prepared_stmt, "");
-	mysql_stmt_next_result(prepared_stmt);
-    
 	mysql_stmt_close(prepared_stmt);
 	return true;
 err:
@@ -792,7 +777,6 @@ bool insertExercise(char Cliente[USERNAME_MAX_SIZE], Date *date, char esercizio[
         goto err;
     }
 	
-	mysql_stmt_next_result(prepared_stmt);
     mysql_stmt_close(prepared_stmt);
     return true;
 
@@ -916,7 +900,6 @@ bool addGymExercise(char esercizio[EXERCISE_MAX_SIZE]){
     }
 
     // Fetch and print the results
-	mysql_stmt_next_result(prepared_stmt);
     mysql_stmt_close(prepared_stmt);
     return true;
 err:

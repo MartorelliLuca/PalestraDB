@@ -180,7 +180,7 @@ static bool iniziaSessione(User *loggedUser) {
                 free(workUser);
                 return true;
             }
-            printError("SESSIONE TERMINATA CON ERRORI.\n");
+            printError("SESSIONE TERMINATA CON ERRORI.");
         }
         free(workUser);
         return false;
@@ -258,7 +258,7 @@ clean_up:
             if(recoverSessionData(workUser)){
                 if(sessioneIniziata(workUser, loggedUser)){
                     free(workUser);
-                    printSuccess("SESSIONE TERMINATA CON SUCCESSO\n");
+                    printSuccess("SESSIONE TERMINATA CON SUCCESSO");
                     break;
                 }
                 printError("SESSIONE TERMINATA CON ERRORI.\n");

@@ -112,6 +112,7 @@ static bool sessioneIniziata(workoutCustomer* workUser, User* loggedUser){
     bool prev_error = false;
 clean_up:
     clearScreen();
+restart:
     showMyTitle();
     printf("\t\t\t\t|‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾|   ORARIO INIZIO: %s\n", workUser->orarioInizio);
     printf("\t\t\t\t|  STAI SVOLGENDO LA TUA SESSIONE  |   DATA SCHEDA:   %s\n", workUser->dataInizioScheda);
@@ -134,7 +135,7 @@ clean_up:
             if(!eseguiEsercizio(workUser)){
                 failed_attempts ++;
             }
-            goto clean_up;
+            goto restart;
             break;
         case 2:
             if(!displayNewRoutine(loggedUser)){

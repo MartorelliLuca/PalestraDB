@@ -180,8 +180,7 @@ bool performExercise(workoutCustomer *workUser, char *esercizio){
 		print_stmt_error(prepared_stmt, "Error in execution for procedure: esegui_esercizio");
 		goto err;
 	}
-	dump_result_set(conn, prepared_stmt, "Esercizio iniziato correttamente.\n");
-	mysql_stmt_next_result(prepared_stmt);
+	
 	mysql_stmt_close(prepared_stmt);
 	return true;
 err:

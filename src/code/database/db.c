@@ -180,7 +180,7 @@ bool performExercise(workoutCustomer *workUser, char *esercizio){
 		print_stmt_error(prepared_stmt, "Error in execution for procedure: esegui_esercizio");
 		goto err;
 	}
-	
+
 	mysql_stmt_close(prepared_stmt);
 	return true;
 err:
@@ -1124,7 +1124,7 @@ bool getPtCf(User* loggedUser) {
     MYSQL_BIND param[2];
 
     // Prepare stored procedure call
-    if (!setup_prepared_stmt(&prepared_stmt, "call prendi_pt_cf(?)", conn)) {
+    if (!setup_prepared_stmt(&prepared_stmt, "call prendi_pt_cf(?, ?)", conn)) {
         finish_with_stmt_error(conn, prepared_stmt, "Unable to initialize prepared statement for procedure: prendi_pt_cf", false);
         goto err1;
     }
@@ -1231,7 +1231,7 @@ bool getCustomerCf(User* loggedUser) {
     MYSQL_BIND param[2];
 
     // Prepare stored procedure call
-    if (!setup_prepared_stmt(&prepared_stmt, "call prendi_cliente_cf(?)", conn)) {
+    if (!setup_prepared_stmt(&prepared_stmt, "call prendi_cliente_cf(?, ?)", conn)) {
         finish_with_stmt_error(conn, prepared_stmt, "Unable to initialize prepared statement for procedure: prendi_cliente_cf", false);
         goto err1;
     }
@@ -1239,19 +1239,13 @@ bool getCustomerCf(User* loggedUser) {
     // Prepare parameters
     memset(param, 0, sizeof(param));
 
-    User* lUser = malloc(sizeof(User));
-    if (lUser == NULL) {
-        printf("Errore: impossibile allocare memoria per la struttura lUser.\n");
-        exit(EXIT_FAILURE);
-    }
-
     param[0].buffer_type = MYSQL_TYPE_VAR_STRING; // IN
     param[0].buffer = loggedUser->username;
     param[0].buffer_length = strlen(loggedUser->username);
 
     param[1].buffer_type = MYSQL_TYPE_VAR_STRING; // OUT
-    param[1].buffer = lUser->cf;
-    param[1].buffer_length = sizeof(lUser->cf);
+    param[1].buffer = loggedUser->cf;
+    param[1].buffer_length = sizeof(loggedUser->cf);
 
     // Binding
     if (mysql_stmt_bind_param(prepared_stmt, param) != 0) {
@@ -1268,8 +1262,8 @@ bool getCustomerCf(User* loggedUser) {
     // Prepare output parameters
     memset(param, 0, sizeof(param));
     param[0].buffer_type = MYSQL_TYPE_VAR_STRING; // OUT
-    param[0].buffer = lUser->cf;
-    param[0].buffer_length = sizeof(lUser->cf);
+    param[0].buffer = loggedUser->cf;
+    param[0].buffer_length = sizeof(loggedUser->cf);
 
     if (mysql_stmt_bind_result(prepared_stmt, param)) {
         print_stmt_error(prepared_stmt, "Could not retrieve output in procedure: prendi_cliente_cf");
@@ -1282,16 +1276,12 @@ bool getCustomerCf(User* loggedUser) {
         goto err;
     }
 
-    strcpy(loggedUser->cf, lUser->cf);
-
     mysql_stmt_close(prepared_stmt);
-    free(lUser);
     return true;
 
 err:
     mysql_stmt_close(prepared_stmt);
 err1:
-    free(lUser);
     return false;
 }
 

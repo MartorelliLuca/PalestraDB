@@ -950,6 +950,58 @@ err1:
 
 }
 
+bool registerNewPt(User user){
+	MYSQL_STMT* prepared_stmt;
+	MYSQL_BIND param[5];
+
+	// Prepare stored procedure call
+	if (!setup_prepared_stmt(&prepared_stmt, "call aggiungi_pt(?, ?, ?, ?, ?)", conn)) {
+		finish_with_stmt_error(conn, prepared_stmt, "Unable to initialize prepared statement for procedure: aggiungi_pt", false);
+		goto err1;
+	}
+	// Prepare parameters
+	memset(param, 0, sizeof(param));
+
+	param[0].buffer_type = MYSQL_TYPE_VAR_STRING; // IN
+	param[0].buffer = user.cf;
+	param[0].buffer_length = strlen(user.cf);
+
+	param[1].buffer_type = MYSQL_TYPE_VAR_STRING; // IN
+	param[1].buffer = user.nome;
+	param[1].buffer_length = strlen(user.nome);
+
+	param[2].buffer_type = MYSQL_TYPE_VAR_STRING; // IN
+	param[2].buffer = user.cognome;
+	param[2].buffer_length = strlen(user.cognome);
+
+	param[3].buffer_type = MYSQL_TYPE_VAR_STRING; // IN
+	param[3].buffer = user.username;
+	param[3].buffer_length = strlen(user.username);
+
+	param[4].buffer_type = MYSQL_TYPE_VAR_STRING; // IN
+	param[4].buffer = user.password;
+	param[4].buffer_length = strlen(user.password);
+
+	// Binding
+	if (mysql_stmt_bind_param(prepared_stmt, param) != 0) {
+		finish_with_stmt_error(conn, prepared_stmt, "Could not bind parameters in procedure: aggiungi_pt", true);
+		goto err;
+	}
+
+	// Execution
+	if (mysql_stmt_execute(prepared_stmt) != 0) {
+		print_stmt_error(prepared_stmt, "Error in execution for procedure: aggiungi_pt");
+		goto err;
+	}
+
+	mysql_stmt_close(prepared_stmt);
+	return true;
+err:
+	mysql_stmt_close(prepared_stmt);
+err1:
+	return false;
+}
+
 bool registerNewCustomer(User user){
 	MYSQL_STMT* prepared_stmt;
 	MYSQL_BIND param[5];

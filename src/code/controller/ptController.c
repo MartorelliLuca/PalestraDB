@@ -24,11 +24,14 @@ bool generaReport(User *loggedUser)
     printBoldGreen("STAI PER INSERIRE LA PRIMA DATA PER L'INTERVALLO DEL REPORT\n");
     if (!getDateFromUser(date2))
     {
+        free(date1);
         return false;
     }
     printSuccess("-- ECCO IL REPORT PER I TUOI CLIENTI --");
     if (!retrieveReport(loggedUser, date1, date2))
     {
+        free(date1);
+        free(date2);    
         return false;
     }
     free(date1);

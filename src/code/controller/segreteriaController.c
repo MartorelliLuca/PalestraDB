@@ -41,7 +41,7 @@ static bool registraNuovoPT(){
         }
         memset(&user, 0, sizeof(User));
         if(promptReg(&user)){
-            if(registerNewCustomer(user)){
+            if(registerNewPt(user)){
                 printSuccess("Nuovo PT registrato correttamente");
                 return true;
             }

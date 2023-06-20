@@ -16,6 +16,8 @@ bool displayMissingExercises(workoutCustomer *workUser);
 
 bool registerNewCustomer(User user);
 
+bool registerNewPt(User user);
+
 bool displayRoutine(User *loggedUser, User *cliente);
 
 bool showOldRoutines(User *user, int *num);

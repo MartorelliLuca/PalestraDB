@@ -38,6 +38,7 @@ Getting Started
             git clone https://github.com/MartorelliLuca/PalestraDB.git
 
        2) Set up your database using the provided SQL schema files. You can do this by running SQL scripts in your preferred database management tool.
+       3) (Optional) You have the choice to perform initial inserts to prevent having an empty database when you start.
 
 
 Database Schema

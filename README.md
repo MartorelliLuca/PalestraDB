@@ -42,6 +42,6 @@ Getting Started
 
 Database Schema
 
-    The database schema is provided in the MODELLOCOMPLETO.mwb file.
+    The database schema is provided in the SQL file, but you can take a look at it even on the MODELLOCOMPLETO.mwb file.
     It defines the structure of the database, including tables, relationships, and sample data.
 

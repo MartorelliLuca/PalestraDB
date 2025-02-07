@@ -1,4 +1,4 @@
-#PalestraDB
+# PalestraDB
 
 This repository contains a database for managing gym-related information.
 
